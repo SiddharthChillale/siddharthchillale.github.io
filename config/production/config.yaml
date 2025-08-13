@@ -1,6 +1,7 @@
 baseURL: $HUGO_BASEURL
 title: Siddharth C
-paginate: 10
+pagination:
+  pageSize: 20
 theme: PaperMod
 
 enableRobotsTXT: true

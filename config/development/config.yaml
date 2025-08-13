@@ -1,6 +1,7 @@
 baseURL: http://localhost:1313/
 title: Siddharth Chillale
-paginate: 20
+pagination:
+  pageSize: 20
 theme: PaperMod
 
 enableRobotsTXT: true
