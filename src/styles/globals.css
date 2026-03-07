@@ -1,0 +1,138 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: #FDF8F6;
+  --foreground: #1A1A2E;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A2E;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A2E;
+  --primary: #E57373;
+  --primary-foreground: #FFFFFF;
+  --secondary: #B3D4FF;
+  --secondary-foreground: #1A1A2E;
+  --muted: #F5F0EB;
+  --muted-foreground: #6B6B7B;
+  --accent: #FFB3B3;
+  --accent-foreground: #1A1A2E;
+  --destructive: #EF5350;
+  --border: #E8E4E1;
+  --input: #E8E4E1;
+  --ring: #B3D4FF;
+}
+
+.dark {
+  --background: #1A1A2E;
+  --foreground: #F5F0EB;
+  --card: #252542;
+  --card-foreground: #F5F0EB;
+  --popover: #252542;
+  --popover-foreground: #F5F0EB;
+  --primary: #FF8A80;
+  --primary-foreground: #1A1A2E;
+  --secondary: #4A6FA5;
+  --secondary-foreground: #F5F0EB;
+  --muted: #2D2D4A;
+  --muted-foreground: #A0A0B0;
+  --accent: #4A4A6A;
+  --accent-foreground: #F5F0EB;
+  --destructive: #FF5252;
+  --border: #3D3D5C;
+  --input: #3D3D5C;
+  --ring: #4A6FA5;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground selection:bg-neutral-200 dark:selection:bg-neutral-800;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-semibold tracking-tight;
+}
+
+/* Rehype Pretty Code */
+div[data-rehype-pretty-code-fragment] {
+  @apply my-8 overflow-hidden rounded-lg border bg-zinc-950 text-[13px];
+}
+
+div[data-rehype-pretty-code-title] {
+  @apply border-b border-zinc-800 bg-zinc-900 px-4 py-2.5 text-xs font-medium text-zinc-400;
+}
+
+pre[data-language] {
+  @apply py-4 overflow-x-auto;
+}
+
+code[data-line-numbers] {
+  counter-reset: line;
+}
+
+code[data-line-numbers] > span[data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  @apply mr-4 inline-block w-4 text-right text-zinc-600;
+}
+
+span[data-line] {
+  @apply px-4 border-l-2 border-transparent;
+}
+
+.line--highlighted {
+  @apply border-l-white/20 bg-white/5;
+}
+
+.word--highlighted {
+  @apply rounded-md bg-zinc-800 px-1.5 py-0.5;
+}
+
+@utility container-custom {
+  @apply mx-auto max-w-[700px] px-4 md:px-6;
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}

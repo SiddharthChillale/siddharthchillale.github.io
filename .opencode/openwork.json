@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "workspace": {
+    "name": "siddharthchillale.github.io",
+    "createdAt": 1772878463217,
+    "preset": "starter"
+  },
+  "authorizedRoots": [
+    "/Users/siddharthchillale/Projects/siddharthchillale.github.io"
+  ]
+}
