@@ -1,0 +1,11 @@
+# Cloudflare Pages project config.
+#
+# Static-only: the site is a Next.js static export, so there are no Workers
+# functions and no compatibility flags to set. Having this file means
+# `bunx wrangler pages deploy` works with no arguments, locally and in CI.
+#
+# Deploy manually:   bun run build && bunx wrangler pages deploy
+# Deploy a preview:  bun run build && bunx wrangler pages deploy --branch=my-branch
+
+name = "siddharthchillale"
+pages_build_output_dir = "out"

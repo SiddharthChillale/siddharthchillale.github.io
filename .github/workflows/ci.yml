@@ -1,0 +1,90 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Read into env so the deploy steps can be skipped with a plain
+      # expression before the Cloudflare secrets have been configured.
+      CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.6
+
+      - run: bun install --frozen-lockfile
+
+      # The content gate. Runs before the build so a frontmatter problem is
+      # reported as a schema error rather than as a confusing build failure.
+      - name: Validate content
+        run: bun run validate:content
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Build
+        # Preview deployments include drafts so an unpublished post can be
+        # reviewed on its pull request. Production never does.
+        env:
+          INCLUDE_DRAFTS: ${{ github.event_name == 'pull_request' && '1' || '' }}
+        run: bun run build
+
+      - name: Deploy to Cloudflare Pages
+        if: env.CF_API_TOKEN != ''
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Branch decides the environment: the production branch publishes to
+          # the live site, anything else becomes a preview deployment.
+          command: pages deploy --branch=${{ github.head_ref || github.ref_name }}
+
+      - name: Comment preview URL on the pull request
+        if: env.CF_API_TOKEN != '' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.deployment-url }}
+        with:
+          script: |
+            const url = process.env.PREVIEW_URL;
+            if (!url) return;
+
+            const marker = '<!-- preview-url -->';
+            const body = `${marker}\n**Preview:** ${url}\n\nBuilt from ${context.sha.slice(0, 7)}.`;
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+
+            const comments = await github.rest.issues.listComments({
+              owner, repo, issue_number,
+            });
+            const existing = comments.data.find(
+              (c) => c.user.type === 'Bot' && c.body?.includes(marker),
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body,
+              });
+            }

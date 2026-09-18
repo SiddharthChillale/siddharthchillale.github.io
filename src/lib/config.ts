@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: 'Siddharth C',
   description: 'Software Developer | Backend, Cloud, Database',
-  url: 'https://siddharthchillale.github.io',
+  url: 'https://siddharthchillale.pages.dev',
   author: 'Siddharth Chillale',
   email: 'siddharth.chillale@gmail.com',
   github: 'https://github.com/SiddharthChillale',
