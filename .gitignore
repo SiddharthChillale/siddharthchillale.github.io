@@ -10,6 +10,11 @@
 /.next/
 /out/
 
+# generated: colocated content assets synced into public/ for the static export.
+# src/content/<collection>/<slug>/images/ is the source of truth.
+/public/blog/
+/public/projects/
+
 # production
 /build
 
