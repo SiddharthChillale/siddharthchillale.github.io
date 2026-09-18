@@ -37,17 +37,17 @@ jobs:
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
       # A pull request opened with GITHUB_TOKEN does not trigger other
       # workflows — GitHub's loop guard — which would mean no ci.yml run and
-      # therefore no preview deployment to review. AGENT_GITHUB_TOKEN is a
+      # therefore no preview deployment to review. CONTENT_BOT_TOKEN is a
       # fine-grained PAT that lifts that restriction; without it the pull
       # request still opens, just without a preview attached.
-      GH_TOKEN: ${{ secrets.AGENT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.CONTENT_BOT_TOKEN || secrets.GITHUB_TOKEN }}
       LIMIT: ${{ inputs.limit || '3' }}
       MANIFEST: ${{ github.workspace }}/.ingest-manifest.json
 
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.AGENT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CONTENT_BOT_TOKEN || secrets.GITHUB_TOKEN }}
 
       - uses: oven-sh/setup-bun@v2
         with:

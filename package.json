@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun run sync:assets && next dev",
+    "dev": "bun run sync:assets && INCLUDE_DRAFTS=1 next dev",
     "build": "bun run clean && bun run sync:assets && next build",
     "start": "next start",
     "lint": "next lint",

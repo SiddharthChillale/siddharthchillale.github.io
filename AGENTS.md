@@ -139,9 +139,15 @@ a run that dies halfway leaves the page `Ready` for the next run. A dropped
 webhook would lose a post silently. To publish immediately, run the workflow by
 hand rather than waiting for the cron.
 
-Posts land with `draft: true`: visible on the preview deployment (CI sets
-`INCLUDE_DRAFTS=1` for pull requests) and invisible in production. Clearing the
-flag is what publishes.
+Posts land with `draft: true`: visible on the preview deployment and invisible
+in production. Clearing the flag is what publishes.
+
+Drafts are **excluded from production builds entirely**, not merely unlisted —
+`src/lib/content.ts` filters them out of `generateStaticParams`, so the route is
+never generated and a draft URL 404s on the live site. `INCLUDE_DRAFTS=1` lifts
+the filter, and is set in two places: `bun run dev` always, and `ci.yml` only for
+`pull_request` events. So a draft is visible locally and on preview deployments,
+and nowhere else.
 
 ### Required secrets
 
@@ -150,9 +156,9 @@ flag is what publishes.
 | `NOTION_TOKEN` | `notion-ingest.yml` | Integration must be shared with the Blog Queue database |
 | `CLOUDFLARE_API_TOKEN` | `ci.yml` | |
 | `CLOUDFLARE_ACCOUNT_ID` | `ci.yml` | |
-| `AGENT_GITHUB_TOKEN` | `notion-ingest.yml` | Fine-grained PAT: contents write, pull requests write |
+| `CONTENT_BOT_TOKEN` | `notion-ingest.yml` | Fine-grained PAT: contents write, pull requests write |
 
-`AGENT_GITHUB_TOKEN` is not optional in practice. A pull request opened with the
+`CONTENT_BOT_TOKEN` is not optional in practice. A pull request opened with the
 default `GITHUB_TOKEN` does not trigger other workflows — GitHub's loop guard —
 so `ci.yml` would never run and there would be no preview deployment to review,
 which is the entire point of the loop. The workflow falls back to `GITHUB_TOKEN`
