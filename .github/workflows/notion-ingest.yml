@@ -35,19 +35,42 @@ jobs:
 
     env:
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-      # A pull request opened with GITHUB_TOKEN does not trigger other
-      # workflows — GitHub's loop guard — which would mean no ci.yml run and
-      # therefore no preview deployment to review. CONTENT_BOT_TOKEN is a
-      # fine-grained PAT that lifts that restriction; without it the pull
-      # request still opens, just without a preview attached.
-      GH_TOKEN: ${{ secrets.CONTENT_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+      # Lifted out of `secrets` purely so the step below can test it: the
+      # `secrets` context is not available in a step-level `if`.
+      CONTENT_BOT_CLIENT_ID: ${{ secrets.CONTENT_BOT_CLIENT_ID }}
       LIMIT: ${{ inputs.limit || '3' }}
       MANIFEST: ${{ github.workspace }}/.ingest-manifest.json
 
     steps:
+      # A pull request opened with GITHUB_TOKEN does not trigger other
+      # workflows — GitHub's loop guard — so ci.yml would never run and there
+      # would be no preview deployment to review, which is the point of the
+      # loop. A GitHub App installation token is not subject to that guard.
+      #
+      # Preferred over a personal access token because it is not tied to one
+      # person's account and there is no expiry date to diarise: the token is
+      # minted per run, lives about an hour, and is revoked automatically when
+      # the job ends.
+      #
+      # Without the App secrets this step is skipped and everything downstream
+      # falls back to GITHUB_TOKEN, so the ingest still opens a pull request —
+      # just a preview-less one.
+      - name: Mint a GitHub App token
+        id: app-token
+        if: env.CONTENT_BOT_CLIENT_ID != ''
+        uses: actions/create-github-app-token@v2
+        with:
+          # `client-id`, not `app-id`: the latter is deprecated by the action.
+          client-id: ${{ secrets.CONTENT_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.CONTENT_BOT_PRIVATE_KEY }}
+          # Narrow the minted token to what the ingest actually does, rather
+          # than inheriting everything the installation is allowed to do.
+          permission-contents: write
+          permission-pull-requests: write
+
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.CONTENT_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -87,11 +110,23 @@ jobs:
 
       - name: Open a pull request per post
         if: steps.check.outputs.count != '0'
+        env:
+          # Must be set here rather than on the job: job-level `env` is
+          # evaluated before any step runs, so it cannot see `steps` outputs.
+          GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
         run: |
           set -euo pipefail
 
-          git config user.name  'notion-ingest'
-          git config user.email 'notion-ingest@users.noreply.github.com'
+          # Attribute commits to the App when there is one, so the history
+          # shows which identity wrote the post.
+          if [ -n "${APP_SLUG:-}" ]; then
+            git config user.name  "$APP_SLUG[bot]"
+            git config user.email "$APP_SLUG[bot]@users.noreply.github.com"
+          else
+            git config user.name  'notion-ingest'
+            git config user.email 'notion-ingest@users.noreply.github.com'
+          fi
 
           base_sha=$(git rev-parse HEAD)
 

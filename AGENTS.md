@@ -156,13 +156,24 @@ and nowhere else.
 | `NOTION_TOKEN` | `notion-ingest.yml` | Integration must be shared with the Blog Queue database |
 | `CLOUDFLARE_API_TOKEN` | `ci.yml` | |
 | `CLOUDFLARE_ACCOUNT_ID` | `ci.yml` | |
-| `CONTENT_BOT_TOKEN` | `notion-ingest.yml` | Fine-grained PAT: contents write, pull requests write |
+| `CONTENT_BOT_CLIENT_ID` | `notion-ingest.yml` | Client ID of the GitHub App |
+| `CONTENT_BOT_PRIVATE_KEY` | `notion-ingest.yml` | Whole `.pem`, `BEGIN`/`END` lines included |
 
-`CONTENT_BOT_TOKEN` is not optional in practice. A pull request opened with the
+The GitHub App is not optional in practice. A pull request opened with the
 default `GITHUB_TOKEN` does not trigger other workflows — GitHub's loop guard —
 so `ci.yml` would never run and there would be no preview deployment to review,
-which is the entire point of the loop. The workflow falls back to `GITHUB_TOKEN`
-so it still opens a pull request without the PAT, just a preview-less one.
+which is the entire point of the loop. `notion-ingest.yml` mints a short-lived
+installation token instead, which is not subject to that guard. Without the App
+secrets the mint step is skipped and the workflow falls back to `GITHUB_TOKEN`,
+so it still opens a pull request, just a preview-less one.
+
+An App rather than a personal access token because the credential is not tied to
+one person's account and has no expiry to diarise: the token is minted per run,
+lives about an hour, and is revoked when the job ends.
+
+The App needs repository permissions **Contents: read and write** and **Pull
+requests: read and write**, and must be installed on this repository. Those two
+are re-requested when the token is minted, so granting less will fail the step.
 
 Scheduled workflows are disabled automatically after 60 days without repository
 activity. If ingest silently stops, check that first.
