@@ -5,12 +5,11 @@ draft: true
 summary: "My understanding from porting Raytracing to Cuda"
 categories: [Graphics]
 tags: [coding, graphics, GPU]
-ShowToc: true
+showToc: true
 cover:
-  image: "/images/rt_cuda/nv_cuda.png"
+  image: "./images/nv_cuda.png"
   alt: "Nvidia Logo"
   caption: "Nvidia logo"
-  relative: true
 ---
 
 CUDA is a library for using Nvidia GPU cores for parallelising code, but it’s multi purpose and is not tailored only towards graphics applications. Hence, the API is low level and memory needs to be managed responsibly by the developer themselves. This makes the code a pain to write and the performance obtained is not much improvement over the software multithreading option (although I admit that this code is not a good bench mark for checking performance between CUDA and CPU parallelism).

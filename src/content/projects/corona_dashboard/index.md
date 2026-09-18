@@ -1,15 +1,13 @@
 ---
 title: Corona Dashboard devlog
-author: Siddharth
 date: 2020-04-10
 summary: Ay ! I developed a COVID-19 dashboard.
 tags: [flask, data science, automation, data visualisation, charts]
-ShowToc: true
+showToc: true
 cover:
-  image: "/images/corona_dashboard/coronavirus.jpg"
+  image: "./images/coronavirus.jpg"
   alt: "Artist impression of coronavirus"
   caption: "A true to life image of a very deadly virus /s"
-  relative: true
 ---
 
 It was around January 2019 when I heard of the rising cases of a deadly disease spreading in china. I was deep into studying data science and machine learning that time and lived and breathed on the Kaggle website. I found the dataset on the number of cases of COVID; people were already making kaggle notebooks on this data. I knew I had to jump on this train. Thus, I started a kaggle notebook with this dataset colected and made available by John Hopkins University.
@@ -28,8 +26,8 @@ I used python for fetching and processing the data. Visualizing of data was done
 
 ### Version 1.0   Date: March 12-18, 2020
 
-![Pie chart of the top 5 countries with highest daily confirmed cases.](/images/corona_dashboard/dashboard[old-1].png)
-![Graph showing the daily count of total confirmed cases.](/images/corona_dashboard/dashboard[old-2].png)
+![Pie chart of the top 5 countries with highest daily confirmed cases.](./images/dashboard-old-1.png)
+![Graph showing the daily count of total confirmed cases.](./images/dashboard-old-2.png)
 
 - Implemented a Confirmed Cases count graph.
 - Implemented a New cases per day graph.
@@ -42,7 +40,7 @@ I used python for fetching and processing the data. Visualizing of data was done
 ---
 ### Version 1.5   Date: March 23-27, 2020
 
-![Look of the website uplifted using plotly.](/images/corona_dashboard/dashboard[updated-1].png)
+![Look of the website uplifted using plotly.](./images/dashboard-updated-1.png)
 
 __Updates__
 
@@ -56,12 +54,12 @@ __Updates__
 
 __Final__
 
-![A rolling mean of the number of new cases against the total number of cases.](/images/corona_dashboard/new_to_total[updated].png)
+![A rolling mean of the number of new cases against the total number of cases.](./images/new_to_total-updated.png)
 - The numbers had very extreme values due to inconsistency of data. Since we are focusing only on the trend, we do not require exact numbers. Therefore, a rolling mean of 5 values is implemented to smoothen out the irregularities.
 
 __Initial__
 
-![A graph that plots new cases per total number of cases](/images/corona_dashboard/new_to_total[old].png)
+![A graph that plots new cases per total number of cases](./images/new_to_total-old.png)
 - Added a graph plotting new cases to existing cases.
 - The Graph is number of New cases per Total number of cases. In order to understand exponential growths for diseases, we must not plot the growth against time (which is not so useful in prediction) ; but with the total existing numbers.[^1]
 - A fall in the graph indicates lowering of new cases with total cases. i.e. We see that China and Korea are out of the danger of new cases. Italy and Spain are seeing small rates of controling the virus.

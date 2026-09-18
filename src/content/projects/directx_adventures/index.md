@@ -2,11 +2,12 @@
 title: "3D rasterizer with DirectX 11"
 date: 2022-07-12T19:14:01-04:00
 draft: false
+summary: "A journal of what I covered building a 3D rasterizer in Direct3D 11 — rasterization, model loading with normals, texture mapping, Blinn-Phong shading, the shader stages and camera control."
 tags: [graphics, Rendering]
 cover:
-  image: "/images/directx_adventures/dx_3df.gif"
+  image: "./images/dx_3df.gif"
+  alt: "A stone-walled room rendered in Direct3D 11, with a shaded grey model floating above a fire-textured panel on the floor"
   caption: "A showcase of the 3D rasteriser"
-  relative: true
 ---
 
 This is journal noting down the topics I covered through my deep dive into Direct 3D 11.

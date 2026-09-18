@@ -2,12 +2,13 @@
 title: "Turning my personal website dream into reality ft.Hugo"
 date: 2024-08-28T19:29:20-05:00
 draft: false
+summary: "How I went from abandoned WordPress attempts to a Hugo site on GitHub Pages, and how GitHub Actions let me delete the manual build-and-rename step I was doing by hand."
 tags: [personal website, Hugo, Github-Actions, Github-Pages]
 showToc: true
 cover:
-  image: "/images/personal_website/social.svg"
+  image: "./images/social.svg"
+  alt: "A hand-drawn sketch of a personal portfolio and blog website"
   caption: "My digital home"
-  relative: true
 ---
 
 ### The Inception
@@ -23,7 +24,7 @@ Fast forward two years of coding and writing documentation for it (yes, I do doc
 
 *I write in Markdown in VSCode -> Hugo takes it and builds an HTML website.*
 
-![A vague idea of what I want.](/images/personal_website/wishlist.svg)
+![A vague idea of what I want.](./images/wishlist.svg)
 
 It also made me have total control on a style that I liked, pages I wanted to show and it was extremely fast to spin up and work in. No resistance. So I picked up a theme from the [HUGO theme collection](https://themes.gohugo.io/), set up my "blog-repo" and started writing into it. I did have to put my focus into learning how to tinker around in the theme to make it my own. Soon, I had a website that I felt 'home-made'.
 
@@ -32,7 +33,7 @@ My process now looked like this:
 
 *Write blogpost->build using Hugo, This generates a static website in the `public/` directory->rename it do `docs/` cos Github only looked into either the root or `docs/` directory -> commit and push to Github repo, Github now hosts my website by looking into `docs/` folder -> "website is published"*
 
-![A convoluted approach to Operations.](/images/personal_website/website_devops_1.svg)
+![A convoluted approach to Operations.](./images/website_devops_1.svg)
 
 ## The Correction
 
@@ -40,11 +41,11 @@ Spinning up and setting it up was no problem, but I had no idea what was going o
 
 *Write Blog -> Commit and Push to Github; Github builds, moves and deploys website -> "Website is published".*
 
-![A much simpler workflow.](/images/personal_website/website_devops_2.svg)
+![A much simpler workflow.](./images/website_devops_2.svg)
 
 ## The Conclusion
 Now I have my own hand-built website where I can put my thoughts down with a peace of mind knowing that if anything went wrong I could fix it myself. I guess it is kind of like building your own little wooden cottage and painting it. Now, I have a digital home and I'm proud of it.
 
-![A cozy wooden cottage.](/images/personal_website/wooden_cottage.jpg)
+![A cozy wooden cottage.](./images/wooden_cottage.jpg)
 
 Now I can relax. Whew! ... or that's what I wished for; but a small machine beside me beckoned me towards the dark side. "Host your website on me", it hissed. What choice did I have, a mere computer-science-fanatical mortal? I reached over and took the card-sized machine in my hand and started thinking about it. My next challenge was to host my website on my RaspberryPi.

@@ -2,6 +2,7 @@
 title: "Handle git mistakes"
 date: 2022-02-05T21:47:05+05:30
 draft: false
+summary: "A quick reference of the git commands I reach for when I need to undo something — amend, checkout, reset, revert, reflog, clean, cherry-pick and friends."
 ---
 
 1. `git status`

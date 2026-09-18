@@ -1,7 +1,7 @@
 ---
-Title: How to Gain Experience
-Date: 2020-11-04
-Author: Siddharth Chillale
+title: How to Gain Experience
+date: 2020-11-04
+summary: "Notes on building experience when you don't have any yet — reading job descriptions properly, volunteering, freelancing, and learning to sell yourself."
 ---
 
 # **What to do to gain Experience**

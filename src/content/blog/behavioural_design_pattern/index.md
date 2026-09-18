@@ -2,6 +2,7 @@
 title: "Behavioural Design Patterns in C++"
 date: 2023-01-24T11:46:00-05:00
 draft: false
+summary: "Condensed notes on the behavioural design patterns in C++ — chain of responsibility, command, mediator, observer, state, visitor and the rest — with small code sketches for each."
 showToc: true
 ---
 Design patterns in C++ are ways to structure code so as to maximise code reusability and versatility. Below are some of the keypoints of the different behavioural design patterns in C++ condensed into quick bites from a course on LinkedIn Learning.

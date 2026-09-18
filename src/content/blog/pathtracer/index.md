@@ -5,12 +5,11 @@ draft: false
 summary: A pathtracing course project.
 categories: [Graphics]
 tags: [graphics, raytracing]
-ShowToc: true
+showToc: true
 cover:
-  image: "/images/pathtracer/32_samples_doda_1.png"
-  alt: "32_samples_doda_1.png"
+  image: "./images/32_samples_doda_1.png"
+  alt: "A noisy Cornell box with red and blue walls and a grey dodecahedron, rendered at 32 samples per pixel"
   caption: "A summary of building a pathtracer"
-  relative: true
 ---
 
 This is a university course project that I took in University at Buffalo on Computer Graphics.
@@ -25,7 +24,7 @@ The pathtracer renders _COLLADA_ files.
 * Task 2. Handling ray-triangle and ray-sphere intersections;
 * Task 3: Path tracing
 
-![Cornell Box with dodecahedron. 32 samples per pixel](/images/pathtracer/32_samples_doda_1.png)
+![Cornell Box with dodecahedron. 32 samples per pixel](./images/32_samples_doda_1.png)
 
 ### Task 1. Generating Camera Rays
 Steps:
@@ -76,7 +75,7 @@ Results from implementing ray-triangle and ray-sphere intersections are displaye
 
 Ray-triangle intersection on model of Cow (cow.dae)
 
-![Cornell Box with dodecahedron. 32 samples per pixel.](/images/pathtracer/32_samples_doda_1.png)
+![Cornell Box with dodecahedron. 32 samples per pixel.](./images/32_samples_doda_1.png)
 
 ### Task 3. Path tracing
 Indirect illumination.
@@ -107,7 +106,7 @@ models with triangle primitives are rendered just fine.
 Plus, the current code works fine for area lights and point lights. I have included results from
 using both point lights and area lights
 
-![Example of 1024 samples on cornel box.](/images/pathtracer/1024_samples_doda.png)
+![Example of 1024 samples on cornel box.](./images/1024_samples_doda.png)
 
 I followed this up with the Ray Tracing in One Weekend series to fill up void in my basic knowledge. You can follow it here : [Ray Tracing in One Weekend](/projects/rt_one_weekend/rt_one_weekend)
 

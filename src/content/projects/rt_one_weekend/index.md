@@ -5,12 +5,11 @@ draft: false
 summary: My understanding from Ray Tracing in One Weekend.
 categories: [Graphics]
 tags: [graphics, raytracing]
-ShowToc: true
+showToc: true
 cover:
-  image: "/images/rt_one_weekend/rt_weekend.png"
-  alt: "ray_img_tga_mixedpdf_1000spp.png"
+  image: "./images/rt_weekend.png"
+  alt: "Three large spheres — diffuse, glass and metal — sitting on a ground plane under a blue sky gradient"
   caption: "Cornell Box with GI"
-  relative: true
 ---
 
 I wanted to learn more about raytracing. This is knowledge follow-up from a Computer Science course that I undertook in university which went through ray tracing fundamentals. Now I did understand the theory of raytracing and the math behind it, but I didn't completely understand how the codebase was structured.
@@ -60,7 +59,7 @@ void save(const char* filepath) const &#123;
 
 2. Now that we have a ray that shoots from the camera position in the direction of the pixel coordinate on the screen space, we follow that ray through the screen and onto our scene geometry which lies behind the screen. Here, we consider that our scene consists of only spheres. After figuring out the math that's required for calculating the intersection between a ray and a sphere, we get two hit points on the sphere. Now, the code just returns one hitpoint which is hardcoded, but the hitpoint where the normal at the hit point makes a negative cosine with ray dir should be considered. When a hit occurs, information about the place where the hit occured is stored in a struct(or an object) and returned to the caller of the intersection. This information includes the distance of this hit point from the pixel, the normal at the point of hit, the parameter t used in the parametric representation of the ray, the material of the object that it hit, if the face it hit is a front face of not (can be determined by dot pdt too), etc. This information is defined as the developer sees fit (Now DirectX12 handles this differently but that's a topic for another post).
 
-![A glass sphere with double glass walls](/images/rt_one_weekend/ray_sph_intr.png)
+![A glass sphere with double glass walls](./images/ray_sph_intr.png)
 
 3. now that we have information about the point that our ray hit, we can do calculations on how to color this pixel from whose ray we intersected an object in the scene. This can be either simple by looking up the material from a resource already created earlier and which is available to the CPU memory, or it can be complicated if the object surface is special like Metal, Dielectric or a combination/permutation of both. This also gets comlicated if the object itself is a volumetric object. In these speacial cases, knowledge of geomtery comes in handy to figure out where the ray travels next. The rest of the chapters handle what types of material exists.
 
@@ -109,14 +108,14 @@ private:
 
 ```
 
-![A glass sphere with double glass walls](/images/rt_one_weekend/double_glass.png)
+![A glass sphere with double glass walls](./images/double_glass.png)
 
 6. The code digresses a bit to cover camera movement and adding an in-camera blur. A thin lens approximation is used for achieving blur.
-![Translating and rotating camera](/images/rt_one_weekend/camera2.png)
-![In-Camera depth of field by manipulating Aperture](/images/rt_one_weekend/aperture.png)
+![Translating and rotating camera](./images/camera2.png)
+![In-Camera depth of field by manipulating Aperture](./images/aperture.png)
 
 7. I have skipped over the details of the diffuse and specular materials here. This is because these topics are important topics that deserve more than a breif summary. However, I will not leave you shivering in the cold there. To make it rudimentarily simple, I summarise it thus : In a perfectly specular material, light is reflected perfectly. This is a mirror material and therefore we can generate the output ray direction easily. To generate a rough mirror/ metal look, we go for a not-so-perfect reflections. This means we sample a direction that is generated from a cone using the perfect reflection direction as the cone axis. For a diffuse material, the resultant ray direction can be from any direction from hit point. Thus we generate a random vector in a hemisphere aound the hit point and send out next ray there.
-![Sphere with diffuse lighting](/images/rt_one_weekend/diffuse_sphere_rtwk.png)
+![Sphere with diffuse lighting](./images/diffuse_sphere_rtwk.png)
 
 8.  Now each ray when it hits an object send the information of that object back to the caller of that particular ray. this leads to an infinite recursive call. Since we don't want to crash our systems with filled out stack, we limit the recursive call to a limited number decided earlier.
 

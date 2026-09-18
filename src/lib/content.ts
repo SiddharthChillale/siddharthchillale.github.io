@@ -1,8 +1,16 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { type Collection, entrySchema } from './content-schema';
 
 const contentDirectory = path.join(process.cwd(), 'src/content');
+
+/**
+ * Drafts are hidden in production but built in preview deployments, so a draft
+ * pull request has a real rendered page to review. CI sets this for
+ * `pull_request` builds only — it must never be set on the production branch.
+ */
+const INCLUDE_DRAFTS = process.env.INCLUDE_DRAFTS === '1';
 
 export interface PostMeta {
   slug: string;
@@ -24,194 +32,119 @@ export interface Post extends PostMeta {
   content: string;
 }
 
-export interface ProjectMeta {
-  slug: string;
-  title: string;
-  date: string;
-  summary: string;
-  categories: string[];
-  tags: string[];
-  cover?: {
-    image: string;
-    alt: string;
-    caption?: string;
+export type ProjectMeta = PostMeta;
+export type Project = Post;
+
+/**
+ * The markdown file is located by extension rather than by name, so a post
+ * directory can hold either `<slug>.md` or `index.md`.
+ */
+function findMarkdownFile(dir: string): string | null {
+  if (!fs.existsSync(dir)) return null;
+  const file = fs.readdirSync(dir).find((f) => f.endsWith('.md'));
+  return file ? path.join(dir, file) : null;
+}
+
+/**
+ * Parses one entry against the shared schema. Invalid frontmatter throws rather
+ * than falling back to empty strings — a blank title should fail the build, not
+ * ship silently.
+ */
+function readEntry(collection: Collection, slug: string): Post | null {
+  const file = findMarkdownFile(path.join(contentDirectory, collection, slug));
+  if (!file) return null;
+
+  const { data, content } = matter(fs.readFileSync(file, 'utf8'));
+  const parsed = entrySchema.safeParse(data);
+
+  if (!parsed.success) {
+    const detail = parsed.error.issues
+      .map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`)
+      .join('; ');
+    throw new Error(
+      `Invalid frontmatter in ${collection}/${slug} — ${detail}. ` +
+        'Run `bun run validate:content` for the full report.',
+    );
+  }
+
+  const entry = parsed.data;
+
+  return {
+    slug,
+    title: entry.title,
+    date: entry.date.toISOString(),
+    summary: entry.summary,
+    categories: entry.categories,
+    tags: entry.tags,
+    cover: entry.cover,
+    draft: entry.draft,
+    showToc: entry.showToc,
+    content,
   };
-  draft?: boolean;
 }
 
-export interface Project extends ProjectMeta {
-  content: string;
+function toMeta({ content: _content, ...meta }: Post): PostMeta {
+  return meta;
 }
 
-function getFiles(dir: string): string[] {
+/** Published entries in a collection, newest first. */
+function readCollection(collection: Collection): PostMeta[] {
+  const dir = path.join(contentDirectory, collection);
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir);
+
+  return fs
+    .readdirSync(dir)
+    .filter((slug) => fs.statSync(path.join(dir, slug)).isDirectory())
+    .map((slug) => readEntry(collection, slug))
+    .filter((entry): entry is Post => entry !== null && (INCLUDE_DRAFTS || !entry.draft))
+    .map(toMeta)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export function getPosts(): PostMeta[] {
-  const blogDir = path.join(contentDirectory, 'blog');
-  const subdirs = getFiles(blogDir);
-  
-  const posts: PostMeta[] = [];
-  
-  for (const subdir of subdirs) {
-    const subdirPath = path.join(blogDir, subdir);
-    if (!fs.statSync(subdirPath).isDirectory()) continue;
-    
-    const mdFile = getFiles(subdirPath).find(f => f.endsWith('.md'));
-    if (!mdFile) continue;
-    
-    const slug = subdir;
-    const fullPath = path.join(subdirPath, mdFile);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data } = matter(fileContents);
-    
-    posts.push({
-      slug,
-      title: data.title || '',
-      date: data.date || '',
-      summary: data.summary || '',
-      categories: data.categories || [],
-      tags: data.tags || [],
-      cover: data.cover,
-      draft: data.draft || false,
-      showToc: data.ShowToc || false,
-    });
-  }
-  
-  return posts
-    .filter((post) => !post.draft)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return readCollection('blog');
 }
 
 export function getPost(slug: string): Post | null {
-  const fullPath = path.join(contentDirectory, 'blog', slug, `${slug}.md`);
-  
-  if (!fs.existsSync(fullPath)) return null;
-  
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = matter(fileContents);
-  
-  return {
-    slug,
-    title: data.title || '',
-    date: data.date || '',
-    summary: data.summary || '',
-    categories: data.categories || [],
-    tags: data.tags || [],
-    cover: data.cover,
-    draft: data.draft || false,
-    showToc: data.ShowToc || false,
-    content,
-  };
+  return readEntry('blog', slug);
 }
 
 export function getProjects(): ProjectMeta[] {
-  const projectsDir = path.join(contentDirectory, 'projects');
-  const subdirs = getFiles(projectsDir);
-  
-  const projects: ProjectMeta[] = [];
-  
-  for (const subdir of subdirs) {
-    const subdirPath = path.join(projectsDir, subdir);
-    if (!fs.statSync(subdirPath).isDirectory()) continue;
-    
-    const mdFile = getFiles(subdirPath).find(f => f.endsWith('.md'));
-    if (!mdFile) continue;
-    
-    const slug = subdir;
-    const fullPath = path.join(subdirPath, mdFile);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data } = matter(fileContents);
-    
-    projects.push({
-      slug,
-      title: data.title || '',
-      date: data.date || '',
-      summary: data.summary || '',
-      categories: data.categories || [],
-      tags: data.tags || [],
-      cover: data.cover,
-      draft: data.draft || false,
-    });
-  }
-  
-  return projects
-    .filter(p => !p.draft)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return readCollection('projects');
 }
 
 export function getProject(slug: string): Project | null {
-  const fullPath = path.join(contentDirectory, 'projects', slug, `${slug}.md`);
-  
-  if (!fs.existsSync(fullPath)) return null;
-  
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = matter(fileContents);
-  
-  return {
-    slug,
-    title: data.title || '',
-    date: data.date || '',
-    summary: data.summary || '',
-    categories: data.categories || [],
-    tags: data.tags || [],
-    cover: data.cover,
-    draft: data.draft || false,
-    content,
-  };
+  return readEntry('projects', slug);
+}
+
+function collectField(field: 'tags' | 'categories'): string[] {
+  const values = new Set<string>();
+  for (const entry of [...getPosts(), ...getProjects()]) {
+    for (const value of entry[field]) values.add(value);
+  }
+  return [...values].sort();
 }
 
 export function getAllTags(): string[] {
-  const posts = getPosts();
-  const projects = getProjects();
-  
-  const tags = new Set<string>();
-  
-  posts.forEach(post => {
-    post.tags.forEach(tag => tags.add(tag));
-  });
-  
-  projects.forEach(project => {
-    project.tags.forEach(tag => tags.add(tag));
-  });
-  
-  return Array.from(tags).sort();
+  return collectField('tags');
 }
 
 export function getAllCategories(): string[] {
-  const posts = getPosts();
-  const projects = getProjects();
-  
-  const categories = new Set<string>();
-  
-  posts.forEach(post => {
-    post.categories.forEach(cat => categories.add(cat));
-  });
-  
-  projects.forEach(project => {
-    project.categories.forEach(cat => categories.add(cat));
-  });
-  
-  return Array.from(categories).sort();
+  return collectField('categories');
 }
 
 export function getPostsByTag(tag: string): PostMeta[] {
-  const posts = getPosts();
-  return posts.filter(post => post.tags.includes(tag));
+  return getPosts().filter((post) => post.tags.includes(tag));
 }
 
 export function getProjectsByTag(tag: string): ProjectMeta[] {
-  const projects = getProjects();
-  return projects.filter(project => project.tags.includes(tag));
+  return getProjects().filter((project) => project.tags.includes(tag));
 }
 
 export function getPostsByCategory(category: string): PostMeta[] {
-  const posts = getPosts();
-  return posts.filter(post => post.categories.includes(category));
+  return getPosts().filter((post) => post.categories.includes(category));
 }
 
 export function getProjectsByCategory(category: string): ProjectMeta[] {
-  const projects = getProjects();
-  return projects.filter(project => project.categories.includes(category));
+  return getProjects().filter((project) => project.categories.includes(category));
 }

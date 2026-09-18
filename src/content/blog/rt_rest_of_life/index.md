@@ -5,12 +5,11 @@ draft: true
 summary: "My understanding from Ray Tracing: The Rest of Your Life."
 categories: [Graphics]
 tags: [graphics, raytracing]
-ShowToc: true
+showToc: true
 cover:
-  image: "/images/rt_rest_life/rt_rest_life.png"
-  alt: "ray_img_tga_mixedpdf_1000spp.png"
+  image: "./images/rt_rest_life.png"
+  alt: "A noisy Cornell box with green and red walls and two grey boxes lit by bounced light"
   caption: "Cornell Box with GI"
-  relative: true
 ---
 
 If you missed the two posts previous to this one, you can read them here: [Ray Tracing in One Weekend](/projects/rt_one_weekend/rt_one_weekend) and [Ray Tracing: The Next Week](/projects/rt_next_week/rt_next_week).

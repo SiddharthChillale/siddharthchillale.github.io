@@ -5,12 +5,11 @@ draft: false
 summary: "My understanding from Ray Tracing: The Next Week."
 categories: [Graphics]
 tags: [graphics, raytracing]
-ShowToc: true
+showToc: true
 cover:
-  image: "/images/rt_next_week/rt_next_week.png"
-  alt: "ray_img_tga_mixedpdf_1000spp.png"
+  image: "./images/rt_next_week.png"
+  alt: "A field of small coloured spheres with large metal, glass and diffuse spheres in the foreground"
   caption: "Cornell Box with GI"
-  relative: true
 ---
 
 Ray tracing next week : This is a continuation of my "Raytracing in a weekend" project.
@@ -28,13 +27,13 @@ Now preparing one box per sphere is good, but if you have hundred spheres,, calc
 1. Solid Texture Mapping
 
 We create a texture class. this is attached to an object's material and acts as its base color. Here, we consider solid texturing, i.e. geometrically achieved textures rather than image look ups.
-![Ray traced Spheres with checkerboard texture](/images/rt_next_week/texture_checker.png)
+![Ray traced Spheres with checkerboard texture](./images/texture_checker.png)
 
 4. Perlin Noise
 
 We oversee the different types of random noise generation and create a noise texture.
-![Ray traced Spheres with discrete noise](/images/rt_next_week/noise0.png)
-![Ray traced Spheres with noise texture](/images/rt_next_week/noise4.png)
+![Ray traced Spheres with discrete noise](./images/noise0.png)
+![Ray traced Spheres with noise texture](./images/noise4.png)
 5. Image Texture Mapping
 
 We looked at geometric textures, and now we can handle image texture data. We learn about uv mapping into an image.
@@ -42,7 +41,7 @@ We looked at geometric textures, and now we can handle image texture data. We le
 6. Rectangles and Lights
 
 Here we come across the rendering equation that we were avoiding for so much time. Light/emissive surfaces are introduced. And the color function includes an approximation of the rendering equation. WE also create a scene of our sphere + rectangles primitives. There's no ray-triangle intersection handled until now or even in the future abd so mesh-laoding is not implemented.
-![Emissive sphere and rectangle](/images/rt_next_week/emissive_lights.png)
+![Emissive sphere and rectangle](./images/emissive_lights.png)
 
 7. Instances for rotation and translation
 
@@ -51,7 +50,7 @@ how rotation and translation is handled is very unintuitive for me. now it makes
 8. Volumetric objects
 
 Volumetric objects can be thought of as materials where light enters the material and changes direction and intensity the further inside it is in that said material.
-![Volumetric cuboids](/images/rt_next_week/volumetric.png)
+![Volumetric cuboids](./images/volumetric.png)
 
 &#123; /*  To understand more of the math used, go read my post on [Ray Tracing: The Rest of your life](../rt_rest_of_life).  */ &#125;
 If you missed the post previous to this one (Ray Tracing in One Weekend), read it [here](/projects/rt_one_weekend/rt_one_weekend)

@@ -5,11 +5,11 @@ draft: false
 summary: A summary of the Rendering pipeline in Unreal Engine.
 categories: [Graphics]
 tags: [Unreal, Rendering]
-ShowToc: true
+showToc: true
 cover:
-  image: "/images/ue_rendering/ue_rendering_schematic.png"
-  caption: "A chart showing covid trends"
-  relative: true
+  image: "./images/ue_rendering_schematic.png"
+  alt: "A flowchart of the Unreal Engine rendering pipeline, running from visibility through basepass, GBuffer, lighting and post processing to the final frame"
+  caption: "A schematic of the Unreal Engine rendering pipeline, from visibility to final frame"
 ---
 
 The Unreal Engine utilizes a rendering pipeline to generate high-quality visuals while maintaining optimal performance across all platforms. This pipeline supports both forward and deferred rendering, and the following overview is based on the ["Rendering Kickstart"](https://www.youtube.com/watch?v=5m0Id2iNOoE&t=2664s&ab_channel=WilliamJames) talk from the Unreal Engine Community Talks.

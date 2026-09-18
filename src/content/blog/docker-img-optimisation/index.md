@@ -4,12 +4,7 @@ date: 2024-12-27T19:14:01-04:00
 draft: false
 summary: "Optimising Docker Image size for a nodejs web server application"
 tags: [optimization, docker, nodejs]
-ShowToc: true
-cover:
-  image: ""
-  alt: ""
-  caption: ""
-  relative: true
+showToc: true
 ---
 
 ## Current Docker Image stats

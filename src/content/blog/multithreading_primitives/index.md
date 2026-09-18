@@ -2,12 +2,13 @@
 title: "Primitives in C++ for Multithreading"
 date: 2023-02-23T19:29:20-05:00
 draft: false
+summary: "What each C++20 synchronization primitive is actually for — mutex, shared_mutex, the lock wrappers, condition variables, semaphores, barriers, latches and futures."
 tags: [multithreading, C++]
 showToc: true
 cover:
-  image: "/images/multithreading_primitives/multithreaded.png"
+  image: "./images/multithreaded.png"
+  alt: "Two balls of yarn, purple and green, with their threads unspooled and running alongside each other"
   caption: "Tied up in threads"
-  relative: true
 ---
 
 ## Motivation:
@@ -62,7 +63,7 @@ The main thread doesn't know what happened to the fetcher thread or how long it'
 This means you want some kind of mechanism to handle the order of execution to be such that main displays only when fetcher is done its job. This leads to the process of "*Synchronizing*" the threads.
 Following are some thingies made available by the C++ STL to make this power of synchronization available to programmers.
 
-![Circumstances which benefit from a particular primitive.](/images/multithreading_primitives/prim_comp.png)
+![Circumstances which benefit from a particular primitive.](./images/prim_comp.png)
 
 ## std::condition_variable (aka cv)
 available in header `<condition_variable>`

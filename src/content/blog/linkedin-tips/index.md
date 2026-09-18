@@ -1,8 +1,8 @@
 ---
-Title: LinkedIn Tips
-Date: 2020-11-04
+title: LinkedIn Tips
+date: 2020-11-04
+summary: "Notes on making a LinkedIn profile do some work for you — treating the summary as an elevator pitch, writing up experience and projects, and asking for informational interviews."
 draft: false
-Author: Siddharth Chillale
 ---
 
 ## LinkedIn Tips

@@ -1,7 +1,7 @@
 ---
-Title: Things I plan to do in the Future
-Date: 2020-11-22
-Author: Siddharth Chillale
+title: Things I plan to do in the Future
+date: 2020-11-22
+summary: "A running checklist of personal goals — binging C++ game programming, shipping a Godot platformer, building a portfolio site, and a reading list I still haven't finished."
 draft: true
 ---
 ###  Bucket List

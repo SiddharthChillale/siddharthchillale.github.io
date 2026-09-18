@@ -1,7 +1,7 @@
 ---
-Title: Miscellaneous Projects that get thrown under the rug
-Date: 2020-11-22
-Author: Siddharth Chillale
+title: Miscellaneous Projects that get thrown under the rug
+date: 2020-11-22
+summary: "Smaller projects that never got a post of their own — NLP topic analysis of NIPS papers, a Sharpe ratio study, a Flask courier management app, a Goodreads scraper and a CLI phonebook."
 draft: true
 ---
 
