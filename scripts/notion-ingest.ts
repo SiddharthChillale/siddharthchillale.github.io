@@ -2,9 +2,11 @@
 /**
  * Ingests Notion "Blog Queue" pages into colocated markdown posts.
  *
- *   bun run notion:ingest              # write posts for every Ready page
- *   bun run notion:ingest --dry-run    # report only, write nothing
- *   bun run notion:ingest --force      # overwrite an existing post directory
+ *   bun run notion:ingest                   # write posts for every Ready page
+ *   bun run notion:ingest --dry-run         # report only, write nothing
+ *   bun run notion:ingest --force           # overwrite an existing post directory
+ *   bun run notion:ingest --limit 3         # oldest N pages only
+ *   bun run notion:ingest --manifest f.json # record what was written, for CI
  *
  * Deliberately contains no LLM step. Conversion, media download and frontmatter
  * are all deterministic, so that media fidelity can be trusted before any
@@ -21,28 +23,33 @@ import { spawnSync } from 'node:child_process';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import { entrySchema } from '../src/lib/content-schema';
+import {
+  DATABASE_ID,
+  DEFAULT_COLLECTION,
+  PROPS,
+  STATUS,
+  argValue,
+} from './notion-schema';
 
 // --------------------------------------------------------------------- config
 
-/** Blog Queue property names. Renaming a property in Notion only changes this. */
-const PROPS = {
-  title: 'Name',
-  status: 'Status',
-  collection: 'Collection',
-  topics: 'Topics',
-  slug: 'Slug',
-  publishDate: 'Publish Date',
-} as const;
-
-const READY_STATUS = 'Ready';
-const DEFAULT_COLLECTION = 'blog';
-
 const TOKEN = process.env.NOTION_TOKEN;
-const DATABASE_ID =
-  process.env.NOTION_DATABASE_ID ?? '3df0586d-b72a-8009-b166-f9420ef8e06e';
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const FORCE = process.argv.includes('--force');
+
+/**
+ * Caps how many pages one run may ingest. Left uncapped locally; CI sets it so
+ * that emptying a long queue cannot open a dozen pull requests at once.
+ */
+const LIMIT = Number(argValue('--limit') ?? '0') || 0;
+
+/**
+ * Where to record what was written. The ingest itself stays ignorant of git;
+ * the workflow reads this to decide which branches and pull requests to open,
+ * and which Notion pages to write back to.
+ */
+const MANIFEST = argValue('--manifest');
 
 const CONTENT_DIR = path.join(process.cwd(), 'src/content');
 
@@ -53,6 +60,17 @@ if (!TOKEN) {
 
 const notion = new Client({ auth: TOKEN });
 const warnings: string[] = [];
+
+interface ManifestEntry {
+  pageId: string;
+  notionUrl: string;
+  title: string;
+  collection: string;
+  slug: string;
+  dir: string;
+}
+
+const manifest: ManifestEntry[] = [];
 
 const HAS_FFMPEG = spawnSync('ffmpeg', ['-version'], { stdio: 'ignore' }).status === 0;
 
@@ -217,11 +235,16 @@ if (!dataSourceId) {
 
 const query: any = await notion.dataSources.query({
   data_source_id: dataSourceId,
-  filter: { property: PROPS.status, status: { equals: READY_STATUS } },
+  filter: { property: PROPS.status, status: { equals: STATUS.ready } },
+  // Oldest first, so a capped run drains the queue in the order things were
+  // captured rather than repeatedly picking up the same recent pages.
+  sorts: [{ timestamp: 'created_time', direction: 'ascending' }],
+  ...(LIMIT > 0 ? { page_size: LIMIT } : {}),
 });
 
 console.log(
-  `${query.results.length} page(s) with status "${READY_STATUS}"` +
+  `${query.results.length} page(s) with status "${STATUS.ready}"` +
+    `${LIMIT > 0 ? `  [limit ${LIMIT}]` : ''}` +
     `${DRY_RUN ? '  [dry run]' : ''}${HAS_FFMPEG ? '' : '  [no ffmpeg]'}\n`,
 );
 
@@ -341,6 +364,15 @@ for (const page of query.results) {
     continue;
   }
 
+  manifest.push({
+    pageId: page.id,
+    notionUrl: page.url ?? '',
+    title,
+    collection,
+    slug,
+    dir: path.relative(process.cwd(), postDir).split(path.sep).join('/'),
+  });
+
   if (DRY_RUN) {
     console.log(`    would write ${collection}/${slug}/index.md\n`);
     written.push(`${collection}/${slug}`);
@@ -351,6 +383,12 @@ for (const page of query.results) {
   fs.writeFileSync(path.join(postDir, 'index.md'), frontmatter(meta) + body + '\n');
   console.log(`    wrote ${collection}/${slug}/index.md\n`);
   written.push(`${collection}/${slug}`);
+}
+
+if (MANIFEST) {
+  fs.mkdirSync(path.dirname(path.resolve(MANIFEST)), { recursive: true });
+  fs.writeFileSync(MANIFEST, `${JSON.stringify(manifest, null, 2)}\n`);
+  console.log(`manifest written to ${MANIFEST}\n`);
 }
 
 // ------------------------------------------------------------------- report

@@ -41,6 +41,8 @@ bun run lint
 | `bun run lint` | Run ESLint |
 | `bun run sync:assets` | Copy colocated post assets into `public/` |
 | `bun run validate:content` | Validate all content frontmatter and asset references |
+| `bun run notion:probe` | Dump one Notion page's converted markdown, for debugging |
+| `bun run notion:ingest` | Convert `Ready` Blog Queue pages into posts |
 
 ## Content Model
 
@@ -100,6 +102,64 @@ supply, so incompleteness is a hard failure rather than a silent empty string.
 
 **Always run `bun run validate:content` before opening a pull request.** It also
 verifies that every image referenced from a post exists on disk.
+
+## Notion ingest
+
+Capture happens in the Notion **Blog Queue** database; Git is authoritative for
+content. Notion holds a pointer — `Status` and `PR` — and never the post itself.
+The flow is one-way and the only write Notion receives is that pointer update.
+
+```
+Notion page (Status: Ready)
+  -> notion-ingest.yml  (cron, or workflow_dispatch)
+  -> src/content/<collection>/<slug>/  on branch cms/<collection>/<slug>
+  -> pull request  ->  Cloudflare preview deployment
+  -> Notion page (Status: Drafted, PR: <url>)
+```
+
+`scripts/notion-schema.ts` holds the property names and status values. Renaming
+a column in Notion is a change there and nowhere else.
+
+```bash
+bun run notion:ingest --dry-run            # report only, write nothing
+bun run notion:ingest --limit 3            # oldest N Ready pages
+bun run notion:ingest --manifest f.json    # record what was written, for CI
+bun run notion:ingest --force              # overwrite an existing post dir
+
+bun run scripts/notion-set-status.ts --page <id> --status Drafted --pr <url>
+```
+
+The ingest contains **no LLM step**. Conversion, media download and frontmatter
+are deterministic so that media fidelity can be trusted before any model is
+involved. Editing is a separate, later pass over the already-converted markdown.
+
+Ingest is **polled, not webhook-driven**. `Status` is a queue that the workflow
+drains, and a page is flipped to `Drafted` only once its pull request exists, so
+a run that dies halfway leaves the page `Ready` for the next run. A dropped
+webhook would lose a post silently. To publish immediately, run the workflow by
+hand rather than waiting for the cron.
+
+Posts land with `draft: true`: visible on the preview deployment (CI sets
+`INCLUDE_DRAFTS=1` for pull requests) and invisible in production. Clearing the
+flag is what publishes.
+
+### Required secrets
+
+| Secret | Used by | Notes |
+|--------|---------|-------|
+| `NOTION_TOKEN` | `notion-ingest.yml` | Integration must be shared with the Blog Queue database |
+| `CLOUDFLARE_API_TOKEN` | `ci.yml` | |
+| `CLOUDFLARE_ACCOUNT_ID` | `ci.yml` | |
+| `AGENT_GITHUB_TOKEN` | `notion-ingest.yml` | Fine-grained PAT: contents write, pull requests write |
+
+`AGENT_GITHUB_TOKEN` is not optional in practice. A pull request opened with the
+default `GITHUB_TOKEN` does not trigger other workflows — GitHub's loop guard —
+so `ci.yml` would never run and there would be no preview deployment to review,
+which is the entire point of the loop. The workflow falls back to `GITHUB_TOKEN`
+so it still opens a pull request without the PAT, just a preview-less one.
+
+Scheduled workflows are disabled automatically after 60 days without repository
+activity. If ingest silently stops, check that first.
 
 ## Deployment
 

@@ -1,0 +1,148 @@
+name: notion-ingest
+
+# Drains the Notion "Blog Queue" of pages marked Ready and opens one pull
+# request per post.
+#
+# Polling rather than webhooks is deliberate. `Status` is a queue and this
+# workflow drains it: each page is flipped to Drafted only once its pull
+# request exists, so a run that dies halfway leaves the page Ready and the next
+# run picks it up. A dropped webhook would lose a post silently.
+
+on:
+  schedule:
+    # Twice a day. GitHub queues scheduled runs and drops them under load, so
+    # treat these times as "eventually" rather than "at".
+    - cron: '0 7,19 * * *'
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum pages to ingest in this run'
+        required: false
+        default: '3'
+
+concurrency:
+  # Never overlap: two runs would race to claim the same Ready pages.
+  group: notion-ingest
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      # A pull request opened with GITHUB_TOKEN does not trigger other
+      # workflows — GitHub's loop guard — which would mean no ci.yml run and
+      # therefore no preview deployment to review. AGENT_GITHUB_TOKEN is a
+      # fine-grained PAT that lifts that restriction; without it the pull
+      # request still opens, just without a preview attached.
+      GH_TOKEN: ${{ secrets.AGENT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+      LIMIT: ${{ inputs.limit || '3' }}
+      MANIFEST: ${{ github.workspace }}/.ingest-manifest.json
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AGENT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.6
+
+      # Screen-recording GIFs out of Notion are routinely an order of magnitude
+      # larger than the equivalent H.264 clip. The ingest degrades gracefully
+      # without ffmpeg, but then ships the GIF.
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - run: bun install --frozen-lockfile
+
+      - name: Ingest from Notion
+        id: ingest
+        # A page that fails to convert must not block the pages that succeeded,
+        # so failures are collected and re-raised after the pull requests exist.
+        continue-on-error: true
+        run: bun run notion:ingest --limit "$LIMIT" --manifest "$MANIFEST"
+
+      - name: Check for ingested posts
+        id: check
+        run: |
+          if [ ! -s "$MANIFEST" ] || [ "$(jq 'length' "$MANIFEST")" -eq 0 ]; then
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            echo "Nothing marked Ready. Done."
+          else
+            echo "count=$(jq 'length' "$MANIFEST")" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The same gate ci.yml runs, applied before anything is committed. A post
+      # that violates the schema should fail here, where the output names the
+      # offending field, rather than later as a build error.
+      - name: Validate content
+        if: steps.check.outputs.count != '0'
+        run: bun run validate:content
+
+      - name: Open a pull request per post
+        if: steps.check.outputs.count != '0'
+        run: |
+          set -euo pipefail
+
+          git config user.name  'notion-ingest'
+          git config user.email 'notion-ingest@users.noreply.github.com'
+
+          base_sha=$(git rev-parse HEAD)
+
+          jq -c '.[]' "$MANIFEST" | while read -r entry; do
+            page_id=$(jq -r '.pageId'     <<< "$entry")
+            notion_url=$(jq -r '.notionUrl' <<< "$entry")
+            title=$(jq -r '.title'        <<< "$entry")
+            collection=$(jq -r '.collection' <<< "$entry")
+            slug=$(jq -r '.slug'          <<< "$entry")
+            dir=$(jq -r '.dir'            <<< "$entry")
+
+            branch="cms/$collection/$slug"
+            echo "::group::$branch"
+
+            # Each post branches from the same base so the pull requests stay
+            # independent and can be merged, or dropped, in any order.
+            git switch --force-create "$branch" "$base_sha"
+            git add --force "$dir"
+            git commit --message "Add $collection post: $title" \
+                       --message "Ingested from Notion: $notion_url"
+            git push --force-with-lease --set-upstream origin "$branch"
+
+            pr_url=$(gh pr create \
+              --base "${{ github.ref_name }}" \
+              --head "$branch" \
+              --title "$collection: $title" \
+              --body "$(printf '%s\n' \
+                "Ingested from Notion by \`notion-ingest\`." \
+                "" \
+                "- Source: $notion_url" \
+                "- Path: \`$dir/\`" \
+                "" \
+                "The post is committed with \`draft: true\`, so it is visible on the" \
+                "preview deployment and invisible in production. Review the rendered" \
+                "preview, leave review comments on anything that needs changing, and" \
+                "clear the draft flag when it is ready to publish." \
+              )")
+
+            echo "opened $pr_url"
+
+            # Only now is it safe to claim the page. Until this runs the page
+            # stays Ready and a later run will retry it.
+            bun run scripts/notion-set-status.ts \
+              --page "$page_id" --status Drafted --pr "$pr_url"
+
+            echo "::endgroup::"
+          done
+
+      - name: Re-raise ingest failures
+        if: steps.ingest.outcome == 'failure'
+        run: |
+          echo "The ingest reported failures. See the 'Ingest from Notion' step."
+          echo "Any page that converted successfully has had its pull request opened."
+          exit 1

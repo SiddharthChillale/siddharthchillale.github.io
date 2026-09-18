@@ -10,6 +10,9 @@
 /.next/
 /out/
 
+# generated: record of what the last Notion ingest wrote, read by CI.
+/.ingest-manifest.json
+
 # generated: colocated content assets synced into public/ for the static export.
 # src/content/<collection>/<slug>/images/ is the source of truth.
 /public/blog/
