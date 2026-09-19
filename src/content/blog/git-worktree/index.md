@@ -2,7 +2,7 @@
 title: "One Feature, One WorkTree: How Git WorkTree Killed My Stashing Habit"
 date: "2026-09-17T10:56:00.000Z"
 summary: "If you've ever been deep in a feature branch — half-written code, a terminal mid-install, an AI assistant cranking away — and a production bug lands on main, you know the ritual. Stash your changes. Switch branches. Pray the stash applies cleanly later. Restart your terminal session. Lose your flow."
-draft: true
+draft: false
 ---
 If you've ever been deep in a feature branch — half-written code, a terminal mid-install, an AI assistant cranking away — and a production bug lands on main, you know the ritual. Stash your changes. Switch branches. Pray the stash applies cleanly later. Restart your terminal session. Lose your flow.
 
