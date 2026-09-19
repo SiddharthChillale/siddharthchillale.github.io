@@ -58,12 +58,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 day: 'numeric',
               })}
             </time>
-            <span>•</span>
-            <div className="flex gap-2">
-              {post.tags.map((tag) => (
-                <span key={tag} className="lowercase">#{tag}</span>
-              ))}
-            </div>
+            {post.tags.length > 0 && (
+              <>
+                <span>•</span>
+                <div className="flex gap-2">
+                  {post.tags.map((tag) => (
+                    <span key={tag} className="lowercase">#{tag}</span>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {post.cover && (

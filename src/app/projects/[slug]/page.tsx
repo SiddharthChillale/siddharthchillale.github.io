@@ -57,12 +57,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 month: 'long',
               })}
             </time>
-            <span>•</span>
-            <div className="flex gap-2">
-              {project.tags.map((tag) => (
-                <span key={tag} className="lowercase">#{tag}</span>
-              ))}
-            </div>
+            {project.tags.length > 0 && (
+              <>
+                <span>•</span>
+                <div className="flex gap-2">
+                  {project.tags.map((tag) => (
+                    <span key={tag} className="lowercase">#{tag}</span>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {project.cover && (
