@@ -11,7 +11,8 @@
     "sync:assets": "bun run scripts/sync-content-assets.ts",
     "validate:content": "bun run scripts/validate-content.ts",
     "notion:probe": "bun run scripts/notion-probe.ts",
-    "notion:ingest": "bun run scripts/notion-ingest.ts"
+    "notion:ingest": "bun run scripts/notion-ingest.ts",
+    "publish:entry": "bun run scripts/publish-entry.ts"
   },
   "dependencies": {
     "@notionhq/client": "^5.26.0",

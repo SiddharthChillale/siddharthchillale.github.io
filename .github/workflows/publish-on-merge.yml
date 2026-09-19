@@ -1,0 +1,116 @@
+name: publish-on-merge
+
+# Merging a cms/** pull request is the editorial decision, so it is also what
+# publishes. Without this the draft flag is a second gate that is easy to
+# forget: the post lands on main, the deploy succeeds, and the page is still
+# absent from the live site with nothing to indicate why.
+#
+# Runs on the merge rather than on the push to main so that it can ask which
+# files the pull request touched. Clearing every draft in the tree would
+# publish unrelated work in progress.
+
+on:
+  pull_request:
+    types: [closed]
+
+concurrency:
+  # Serialise pushes to main: two posts merged together would race.
+  group: publish-on-merge
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  publish:
+    # Closed is not merged. A pull request abandoned without merging must not
+    # publish anything.
+    if: >-
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'cms/')
+    runs-on: ubuntu-latest
+
+    env:
+      # Lifted out of `secrets` so the step below can test it: the `secrets`
+      # context is not available in a step-level `if`.
+      CONTENT_BOT_CLIENT_ID: ${{ secrets.CONTENT_BOT_CLIENT_ID }}
+      PR: ${{ github.event.pull_request.number }}
+      BASE: ${{ github.event.pull_request.base.ref }}
+
+    steps:
+      # The resulting push has to trigger ci.yml, otherwise the post is
+      # published in git and never deployed. GITHUB_TOKEN would not.
+      - name: Mint a GitHub App token
+        id: app-token
+        if: env.CONTENT_BOT_CLIENT_ID != ''
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.CONTENT_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.CONTENT_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: read
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.6
+
+      # No `bun install`: scripts/publish-entry.ts uses only the standard
+      # library, precisely so that publishing cannot be broken by a dependency.
+
+      - name: Clear the draft flag
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t files < <(
+            gh pr view "$PR" --json files --jq '.files[].path' \
+              | grep -E '^src/content/[^/]+/[^/]+/index\.md$' || true
+          )
+
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No content entries in this pull request. Nothing to publish."
+            exit 0
+          fi
+
+          # A file the pull request deleted is not an error worth failing on,
+          # and the script treats a missing path as one, so filter first.
+          present=()
+          for file in "${files[@]}"; do
+            [ -f "$file" ] && present+=("$file")
+          done
+
+          if [ ${#present[@]} -eq 0 ]; then
+            echo "Entries were removed before the merge. Nothing to publish."
+            exit 0
+          fi
+
+          bun run scripts/publish-entry.ts "${present[@]}"
+
+          if git diff --quiet; then
+            echo "Already published. Nothing to commit."
+            exit 0
+          fi
+
+          if [ -n "${APP_SLUG:-}" ]; then
+            git config user.name  "$APP_SLUG[bot]"
+            git config user.email "$APP_SLUG[bot]@users.noreply.github.com"
+          else
+            git config user.name  'notion-ingest'
+            git config user.email 'notion-ingest@users.noreply.github.com'
+          fi
+
+          git commit --all \
+            --message "Publish #$PR" \
+            --message "Draft flag cleared on merge of ${{ github.event.pull_request.head.ref }}."
+
+          # Another merge may have landed between checkout and now.
+          git pull --rebase origin "$BASE"
+          git push origin "HEAD:$BASE"
