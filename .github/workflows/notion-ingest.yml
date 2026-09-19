@@ -58,9 +58,11 @@ jobs:
       - name: Mint a GitHub App token
         id: app-token
         if: env.CONTENT_BOT_CLIENT_ID != ''
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
-          # `client-id`, not `app-id`: the latter is deprecated by the action.
+          # `client-id`, not `app-id`: the latter is deprecated. Note this
+          # input only exists from v3 onwards — on v2 it is silently ignored
+          # and the action fails with "appId option is required".
           client-id: ${{ secrets.CONTENT_BOT_CLIENT_ID }}
           private-key: ${{ secrets.CONTENT_BOT_PRIVATE_KEY }}
           # Narrow the minted token to what the ingest actually does, rather
