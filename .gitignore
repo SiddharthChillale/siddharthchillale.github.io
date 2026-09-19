@@ -25,6 +25,11 @@
 .DS_Store
 *.pem
 
+# scratch files. Cheap insurance against `git add -A` sweeping up a
+# throwaway script or commit message written at the repo root.
+/.tmp-*
+/.commit-msg.tmp
+
 # debug
 npm-debug.log*
 yarn-debug.log*

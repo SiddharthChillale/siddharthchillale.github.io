@@ -196,10 +196,15 @@ activity. If ingest silently stops, check that first.
 
 ## Deployment
 
-The site deploys to Cloudflare Pages from `.github/workflows/ci.yml`. Project
-config lives in `wrangler.toml`, so `bunx wrangler pages deploy` works with no
-arguments after a build. Pull requests get a preview deployment, and the URL is
-posted as a comment on the PR.
+Cloudflare Pages is the only deploy target. GitHub Pages was retired once the
+Cloudflare pipeline was proven end to end — it could not do preview deployments,
+and running both meant every push built the site twice. Do not reintroduce a
+`gh-pages` workflow or branch.
+
+The site deploys from `.github/workflows/ci.yml`. Project config lives in
+`wrangler.toml`, so `bunx wrangler pages deploy` works with no arguments after a
+build. Pull requests get a preview deployment, and the URL is posted as a comment
+on the PR.
 
 ## Static Export
 
