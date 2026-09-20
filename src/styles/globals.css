@@ -22,6 +22,10 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  /* --secondary is a fill. Use this when the blue has to be readable AS text:
+     #B3D4FF on #FDF8F6 is about 1.4:1. */
+  --color-secondary-ink: var(--secondary-ink);
+  --color-muted-foreground-2: var(--muted-foreground-2);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -44,8 +48,9 @@
      --muted-foreground and --border. */
   --muted-foreground-2: #9C94A0;
   /* --secondary at a weight that is actually readable as text.
-     #B3D4FF on #FDF8F6 is ~1.4:1. */
-  --secondary-ink: #5B7FB9;
+     #B3D4FF on #FDF8F6 is ~1.4:1; this is 4.6:1, so it clears AA for the
+     14px body copy on the home page. */
+  --secondary-ink: #4F72A8;
   --hover: #F7F2EE;
 
   /* Tag tints, mixed from --primary and --secondary. */

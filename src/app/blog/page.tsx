@@ -24,7 +24,7 @@ export default function BlogPage() {
             >
               <div className="flex flex-col gap-1">
                 <div className="flex items-baseline justify-between">
-                  <h2 className="text-sm font-semibold group-hover:text-secondary transition-colors leading-tight">
+                  <h2 className="text-sm font-semibold group-hover:text-secondary-ink transition-colors leading-tight">
                     {post.title}
                   </h2>
                   <time className="text-xs font-medium text-muted-foreground/40 tabular-nums">

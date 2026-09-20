@@ -15,7 +15,7 @@ export default function Home() {
           </h1>
         </FadeIn>
         <FadeIn direction="up" distance={10} delay={0.2}>
-          <p className="text-sm font-medium text-secondary mb-8 max-w-[600px] leading-relaxed">
+          <p className="text-sm font-medium text-secondary-ink mb-8 max-w-[600px] leading-relaxed">
             {siteConfig.description}
           </p>
         </FadeIn>
@@ -61,7 +61,7 @@ export default function Home() {
                 href={`/blog/${post.slug}`}
                 className="group flex items-baseline justify-between py-1"
               >
-                <span className="text-sm font-medium group-hover:text-secondary transition-colors truncate pr-4">
+                <span className="text-sm font-medium group-hover:text-secondary-ink transition-colors truncate pr-4">
                   {post.title}
                 </span>
                 <time className="text-xs font-medium text-muted-foreground/60 tabular-nums shrink-0">

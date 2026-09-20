@@ -20,7 +20,7 @@ export default function ResumePage() {
         <div className="prose prose-sm prose-neutral dark:prose-invert max-w-none">
           <section className="mb-12">
             <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">Experience</h2>
-            <p className="text-secondary font-medium leading-relaxed italic">
+            <p className="text-secondary-ink font-medium leading-relaxed italic">
               Software Developer with experience in backend development, cloud computing, and database management.
             </p>
           </section>

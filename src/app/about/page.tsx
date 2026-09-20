@@ -213,7 +213,10 @@ export default function AboutPage() {
       <Bento>
         {/* Portrait - the only tonal thing on a page made of line */}
         <Tile span="md:col-start-1 md:col-end-3 md:row-start-1 md:row-end-4" className="items-center gap-0.5">
-          <div className="relative min-h-0 w-full flex-1 overflow-hidden rounded-sm bg-muted">
+          {/* Mobile rows are content-sized, so `flex-1` has nothing to fill and
+              the portrait collapses to a sliver. Give it a real aspect ratio
+              there, and only let it fill the tile once rows are fixed at md. */}
+          <div className="relative w-full max-w-[280px] overflow-hidden rounded-sm bg-muted aspect-square md:aspect-auto md:min-h-0 md:max-w-none md:flex-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/profile/SiddharthChillale_square.jpg"
