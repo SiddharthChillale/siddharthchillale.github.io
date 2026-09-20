@@ -1,305 +1,473 @@
-import Link from 'next/link';
+import type { Metadata } from 'next';
 import { siteConfig } from '@/lib/config';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Icon, type IconName } from '@/components/ui/line-icon';
+import { Bento, Tile, TileLabel, Tag } from '@/components/ui/tile';
+import { FadeScroll } from '@/components/ui/fade-scroll';
 
-const timeline = [
+export const metadata: Metadata = {
+  title: 'About',
+  description:
+    'Siddharth Chillale - backend systems, cloud, and AI architecture.',
+};
+
+type Tone = 'coral' | 'blue' | 'sand' | 'lilac';
+
+const socials: { label: string; handle: string; href: string; icon: IconName }[] =
+  [
+    {
+      label: 'GitHub',
+      handle: 'SiddharthChillale',
+      href: siteConfig.github,
+      icon: 'github',
+    },
+    {
+      label: 'LinkedIn',
+      handle: 'schillal',
+      href: siteConfig.linkedin,
+      icon: 'linkedin',
+    },
+    {
+      label: 'X',
+      handle: 'TheLongRaven',
+      href: siteConfig.twitter,
+      icon: 'x',
+    },
+    {
+      label: 'Email',
+      handle: 'say hello',
+      href: `mailto:${siteConfig.email}`,
+      icon: 'mail',
+    },
+    {
+      label: 'Résumé',
+      handle: 'PDF',
+      href: '/docs/siddharth-chillale-resume.pdf',
+      icon: 'doc',
+    },
+  ];
+
+const tools: { name: string; tone: Tone }[] = [
+  { name: 'Node.js', tone: 'coral' },
+  { name: 'Python', tone: 'coral' },
+  { name: 'Go', tone: 'coral' },
+  { name: 'C / C++', tone: 'coral' },
+  { name: 'PostgreSQL', tone: 'blue' },
+  { name: 'Docker', tone: 'blue' },
+  { name: 'AWS', tone: 'blue' },
+  { name: 'Linux', tone: 'sand' },
+];
+
+const domains: { name: string; icon: IconName }[] = [
+  { name: 'Backend architecture', icon: 'server' },
+  { name: 'Distributed systems', icon: 'flow' },
+  { name: 'Agent workflows & MCP', icon: 'bot' },
+  { name: 'Retrieval & extraction', icon: 'search' },
+];
+
+const timeline: {
+  org: string;
+  period: string;
+  open?: boolean;
+  rows: { title: string; detail: string }[];
+}[] = [
   {
-    period: '2021-2023',
-    items: [
+    org: 'IncubXperts',
+    period: 'Now',
+    open: true,
+    rows: [
       {
-        title: 'Masters in Computer Science',
-        subtitle: 'University at Buffalo',
-        details: 'GPA - 3.4/4.0',
-      },
-      {
-        title: 'Backend Web Developer',
-        subtitle: 'University at Buffalo',
+        title: 'Backend systems & AI architecture',
+        detail: 'Pune, Maharashtra',
       },
     ],
   },
   {
-    period: '2017-2021',
-    items: [
+    org: 'CodersData LLC',
+    period: '2023-24',
+    rows: [
       {
-        title: 'B Tech, Department of Computer Science',
-        subtitle: 'Indian Institute of Information Technology, Tiruchirappalli',
-        details: 'CGPA - 8.81/10',
+        title: 'Data Management Analyst',
+        detail: 'Remote - Python, Power BI',
       },
       {
-        title: 'Teaching Assistant',
-        subtitle: 'ShiP.py',
-      },
-      {
-        title: 'Hosted HacktoberFest Event',
-        subtitle: 'IIIT Tiruchirappalli',
-      },
-      {
-        title: 'Frontend Developer',
-        subtitle: 'Xungry',
+        title: 'Dashboards and ETL automation',
+        detail: 'Cut manual reporting by 40%',
       },
     ],
   },
   {
-    period: '2017',
-    items: [
+    org: 'University at Buffalo',
+    period: '2022-23',
+    rows: [
+      { title: 'Backend Developer', detail: 'Node.js, Express, MySQL' },
       {
-        title: 'Intermediate',
-        subtitle: 'Rajiv Gandhi School of e-learning, Pune',
+        title: '20+ REST APIs, led a team of four',
+        detail: '25+ code reviews, 20+ PR merges',
       },
     ],
   },
   {
-    period: '2015',
-    items: [
+    org: 'MS Computer Science',
+    period: '2021-23',
+    rows: [
       {
-        title: 'Matriculation',
-        subtitle: 'Mona School, Maharashtra',
+        title: 'University at Buffalo, SUNY',
+        detail: 'OS, distributed systems, databases',
+      },
+    ],
+  },
+  {
+    org: 'ShiP.py',
+    period: '2020',
+    rows: [
+      { title: 'Teaching Assistant', detail: 'Learning to Py - Texas A&M' },
+    ],
+  },
+  {
+    org: 'B.Tech, Computer Science',
+    period: '2017-21',
+    rows: [
+      {
+        title: 'IIIT Tiruchirappalli',
+        detail: 'Databases, parallel algorithms, compilers',
       },
     ],
   },
 ];
 
-const certifications = [
+const projects: {
+  title: string;
+  when: string;
+  blurb: string;
+  icon: IconName;
+  stack: { name: string; tone: Tone }[];
+}[] = [
   {
-    title: 'AWS Certified Cloud Practitioner (CLF)',
-    id: 'Q4B80MS2V1VE14S9',
-    period: 'July 2023 - July 2026',
-    major: true,
-  },
-  {
-    title: 'Mastering C++ - LinkedIn',
-    details: [
-      'Standard Template Library',
-      'Test-Driven Development in C++',
-      'Parallel and Concurrent Programming',
-      'Advanced Topics in C++ (lambdas, rvalue-lvalue references, move semantics)',
+    title: 'Agent workflows on MCP',
+    when: 'IncubXperts',
+    blurb: 'Agents wired to internal tools through MCP servers.',
+    icon: 'bot',
+    stack: [
+      { name: 'MCP', tone: 'lilac' },
+      { name: 'Agents', tone: 'lilac' },
     ],
-    major: false,
   },
   {
-    title: 'Deep Learning Specialization - Andrew Ng',
-    organization: 'Coursera | Deeplearning.ai',
-    id: 'P5R349GJHTFX',
-    date: 'May 2020',
-    url: 'https://www.coursera.org/account/accomplishments/certificate/P5R349GJHTFX',
-    major: false,
+    title: 'RAG & extraction pipelines',
+    when: 'IncubXperts',
+    blurb:
+      'Retrieval and document extraction built for production reliability rather than demo accuracy.',
+    icon: 'search',
+    stack: [
+      { name: 'RAG', tone: 'lilac' },
+      { name: 'Python', tone: 'coral' },
+    ],
   },
   {
-    title: 'Machine Learning - Andrew Ng',
-    organization: 'Coursera | Stanford',
-    id: 'SFMCHP7F6W9C',
-    date: 'Jan 2020',
-    url: 'https://www.coursera.org/account/accomplishments/verify/SFMCHP7F6W9C',
-    major: false,
+    title: 'Team Assignment Platform',
+    when: '2024',
+    blurb:
+      'JWT auth and role-based access, containerised, CI/CD into ECR and EC2.',
+    icon: 'server',
+    stack: [
+      { name: 'Node', tone: 'coral' },
+      { name: 'PostgreSQL', tone: 'blue' },
+      { name: 'AWS', tone: 'blue' },
+    ],
   },
   {
-    title: 'Probability and Statistics',
-    organization: 'Coursera | University of London',
-    id: '74M4UJXAGWA2',
-    date: 'Apr 2020',
-    url: 'https://coursera.org/share/6530c259db28487e4da9de750e0d7272',
-    major: false,
+    title: 'Taco-DB',
+    when: '2022',
+    blurb:
+      'A relational engine - joins, aggregations, B-tree indexing and query optimisation.',
+    icon: 'db',
+    stack: [
+      { name: 'C++', tone: 'coral' },
+      { name: 'Linux', tone: 'sand' },
+    ],
   },
 ];
 
-const interests = [
-  'Server side development',
-  'Cloud Engineering',
-  'Low-level software systems',
-  'Computer Graphics and 3D rendering',
+const certifications: { name: string; issued: string; icon: IconName }[] = [
+  { name: 'Claude Certified Architect', issued: 'Aug 2026', icon: 'award' },
+  { name: 'Certified SAFe® Practitioner', issued: 'Jan 2026', icon: 'award' },
+  { name: 'Graph Data Modeling - Neo4j', issued: 'Feb 2025', icon: 'doc' },
+  { name: 'AWS Cloud Practitioner', issued: 'Jul 2023', icon: 'award' },
+  { name: 'Deep Learning Specialization', issued: '2020', icon: 'doc' },
+  { name: 'Machine Learning - Stanford', issued: '2020', icon: 'doc' },
+  { name: 'Probability & Statistics', issued: '2020', icon: 'doc' },
 ];
 
-const readingList = [
+const reading: { title: string; author: string; done: boolean }[] = [
   {
-    category: 'Soft Skills',
-    title: "The Software Developer's Life Manual - John Sonmez",
+    title: 'The Software Developer’s Life Manual',
+    author: 'John Sonmez',
+    done: false,
   },
-  {
-    category: 'Architecture',
-    title: 'Architecture of Consoles',
-    url: 'https://www.copetti.org/writings/consoles/',
-  },
+  { title: 'Architecture of Consoles', author: 'copetti.org', done: true },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="container-custom py-12">
-      <div className="max-w-3xl mx-auto">
-        {/* Profile Section */}
-        <section className="text-center mb-12">
-          <div className="relative inline-block mb-6">
-            <div className="w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
-              <img
-                src="/profile/SiddharthChillale_square.jpg"
-                alt="Siddharth Chillale"
-                className="w-full h-full object-cover"
-              />
+    <div data-wide className="container-custom py-8">
+      <Bento>
+        {/* Portrait - the only tonal thing on a page made of line */}
+        <Tile span="md:col-start-1 md:col-end-3 md:row-start-1 md:row-end-4" className="items-center gap-0.5">
+          <div className="relative min-h-0 w-full flex-1 overflow-hidden rounded-sm bg-muted">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/profile/SiddharthChillale_square.jpg"
+              alt="Siddharth Chillale"
+              className="absolute inset-0 size-full object-cover object-[50%_20%]"
+            />
+          </div>
+          <h1 className="mt-2.5 text-center text-2xl font-normal leading-tight">
+            Siddharth Chillale
+          </h1>
+          <p className="text-center text-[12.5px] text-muted-foreground">
+            Backend Systems &middot; Cloud &middot; AI Architecture
+          </p>
+        </Tile>
+
+        {/* Callout - the only tile allowed a fill */}
+        <Tile span="md:col-start-3 md:col-end-7 md:row-start-1 md:row-end-2" muted className="flex-row items-center gap-3.5">
+          <Icon name="server" className="size-6 shrink-0 text-primary" />
+          <p className="text-[15px] leading-relaxed">
+            I build scalable, efficient backend systems &mdash; lately the kind
+            that carry AI workloads past the demo and into production: RAG
+            pipelines, agent workflows, extraction. I also read books, and read
+            books about writing programs.
+          </p>
+        </Tile>
+
+        {/* Education + socials */}
+        <Tile span="md:col-start-3 md:col-end-5 md:row-start-2 md:row-end-4" className="gap-px">
+          <div className="flex items-start gap-3 px-1.5 pb-3">
+            <Icon name="cap" className="mt-0.5 size-5 shrink-0 text-[var(--muted-foreground-2)]" />
+            <div>
+              <div className="text-sm font-semibold leading-snug">
+                MS Computer Science
+              </div>
+              <div className="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">
+                University at Buffalo, SUNY &middot; 2023
+              </div>
             </div>
           </div>
-          
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Hi! I&apos;m Siddharth Chillale
-          </h1>
-          
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-xl mx-auto">
-            I completed my Masters in Computer Science at University at Buffalo.
-            I love reading books, programming, and books on programming. I also draw, paint and admire art of any kind.
-            I play Table Tennis, Badminton and I like to think I&apos;m good at it!
-            Curious, tenacious and persistent are some adjectives that define me.
-            I constantly try to expand my world view by seeking out new and fresh experiences.
+          <div className="mx-1.5 mb-1.5 h-px bg-border" aria-hidden="true" />
+          {socials.map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target={s.href.startsWith('mailto:') ? undefined : '_blank'}
+              rel="noopener noreferrer"
+              className="flex items-center gap-2.5 rounded-xs px-2 py-[5px] text-[13.5px] transition-colors hover:bg-[var(--hover)] hover:text-primary"
+            >
+              <Icon
+                name={s.icon}
+                className="size-[15px] shrink-0 text-[var(--muted-foreground-2)]"
+              />
+              {s.label}
+              <span className="ml-auto text-[11.5px] text-[var(--muted-foreground-2)]">
+                {s.handle}
+              </span>
+            </a>
+          ))}
+        </Tile>
+
+        {/* Stack: things you install get tags, things you do get line icons */}
+        <Tile span="md:col-start-5 md:col-end-7 md:row-start-2 md:row-end-4">
+          <TileLabel icon="chip" className="mb-2">
+            Stack
+          </TileLabel>
+          <p className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[var(--muted-foreground-2)]">
+            Languages &amp; tools
           </p>
-        </section>
-
-        {/* Interests */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold mb-4">Topics of Interest</h2>
-          <ul className="grid gap-2 md:grid-cols-2">
-            {interests.map((interest) => (
-              <li key={interest} className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-primary" />
-                {interest}
-              </li>
+          <div className="flex flex-wrap gap-1.5">
+            {tools.map((t) => (
+              <Tag key={t.name} tone={t.tone}>
+                {t.name}
+              </Tag>
             ))}
-          </ul>
-        </section>
-
-        {/* Contact */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold mb-4">Get in Touch</h2>
-          <div className="flex flex-wrap gap-3">
-            <Button asChild variant="outline">
-              <a href={`mailto:${siteConfig.email}`}>Email</a>
-            </Button>
-            <Button asChild variant="outline">
-              <a href={siteConfig.linkedin} target="_blank" rel="noopener noreferrer">
-                LinkedIn
-              </a>
-            </Button>
-            <Button asChild variant="outline">
-              <a href={siteConfig.github} target="_blank" rel="noopener noreferrer">
-                GitHub
-              </a>
-            </Button>
           </div>
-        </section>
-
-        <Separator className="my-12" />
-
-        {/* Timeline */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-8">Timeline</h2>
-          
-          <div className="space-y-8">
-            {timeline.map((period) => (
-              <div key={period.period}>
-                <h3 className="text-lg font-semibold text-primary mb-4">{period.period}</h3>
-                <div className="space-y-4">
-                  {period.items.map((item, idx) => (
-                    <div key={idx} className="pl-4 border-l-2 border-muted">
-                      <h4 className="font-medium">{item.title}</h4>
-                      <p className="text-sm text-muted-foreground">{item.subtitle}</p>
-                      {item.details && (
-                        <p className="text-sm text-muted-foreground">{item.details}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
+          <p className="mb-1.5 mt-3 text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[var(--muted-foreground-2)]">
+            Domains
+          </p>
+          <div className="flex flex-col gap-1.5">
+            {domains.map((d) => (
+              <div
+                key={d.name}
+                className="flex items-center gap-2.5 text-[12.5px] leading-tight"
+              >
+                <Icon
+                  name={d.icon}
+                  className="size-[15px] shrink-0 text-[var(--muted-foreground-2)]"
+                />
+                {d.name}
               </div>
             ))}
           </div>
-        </section>
+        </Tile>
 
-        <Separator className="my-12" />
-
-        {/* Certifications */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Certifications</h2>
-          
-          <div className="space-y-6">
-            {certifications.map((cert, idx) => (
-              <div
-                key={idx}
-                className={`p-4 rounded-lg border ${
-                  cert.major ? 'bg-primary/5 border-primary/20' : 'bg-card'
-                }`}
-              >
-                {cert.major ? (
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg">{cert.title}</h3>
-                      <p className="text-sm text-muted-foreground">{cert.period}</p>
+        {/* Timeline - real <details>, so six entries fit in one tile */}
+        <Tile span="md:col-start-1 md:col-end-3 md:row-start-4 md:row-end-6">
+          <TileLabel icon="clock">Timeline</TileLabel>
+          <FadeScroll label="Timeline">
+            {timeline.map((era) => (
+            <details
+              key={era.org}
+              open={era.open}
+              className="group border-b border-border last:border-b-0"
+            >
+              <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-xs px-1.5 py-2 text-[13.5px] font-medium hover:bg-[var(--hover)] [&::-webkit-details-marker]:hidden">
+                <Icon
+                  name="chevron"
+                  className="size-3 shrink-0 text-[var(--muted-foreground-2)] transition-transform group-open:rotate-90"
+                />
+                {era.org}
+                <span className="ml-auto shrink-0 text-[11.5px] tabular-nums text-[var(--muted-foreground-2)]">
+                  {era.period}
+                </span>
+              </summary>
+              <div className="flex flex-col gap-2 py-0.5 pb-3 pl-7 pr-1.5">
+                {era.rows.map((r) => (
+                  <div key={r.title}>
+                    <div className="text-[13px] leading-snug">{r.title}</div>
+                    <div className="text-xs leading-snug text-muted-foreground">
+                      {r.detail}
                     </div>
-                    <span className="text-xs font-mono bg-primary/10 px-2 py-1 rounded">
-                      ID: {cert.id}
+                  </div>
+                ))}
+                </div>
+              </details>
+            ))}
+          </FadeScroll>
+        </Tile>
+
+        {/* Selected work */}
+        <Tile span="md:col-start-3 md:col-end-7 md:row-start-4 md:row-end-6">
+          <TileLabel icon="cube">Selected work</TileLabel>
+          <div className="grid min-h-0 flex-1 content-start gap-x-3.5 gap-y-1.5 md:grid-cols-2">
+            {projects.map((p) => (
+              <div
+                key={p.title}
+                className="flex items-start gap-2.5 rounded-xs px-1.5 py-[7px] hover:bg-[var(--hover)]"
+              >
+                <Icon
+                  name={p.icon}
+                  className="mt-0.5 size-[19px] shrink-0 text-[var(--muted-foreground-2)]"
+                />
+                <div>
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="text-[13px] font-semibold leading-tight">
+                      {p.title}
+                    </span>
+                    <span className="text-[11px] tabular-nums text-[var(--muted-foreground-2)]">
+                      {p.when}
                     </span>
                   </div>
-                ) : (
-                  <>
-                    <h3 className="font-semibold">{cert.title}</h3>
-                    {cert.organization && (
-                      <p className="text-sm text-muted-foreground">{cert.organization}</p>
-                    )}
-                    {cert.details && (
-                      <ul className="mt-2 space-y-1">
-                        {cert.details.map((detail, i) => (
-                          <li key={i} className="text-sm text-muted-foreground flex items-center gap-2">
-                            <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-                            {detail}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    {cert.id && (
-                      <p className="text-xs text-muted-foreground mt-2 font-mono">
-                        Credential ID: {cert.id}
-                      </p>
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <Separator className="my-12" />
-
-        {/* Reading List */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">What I&apos;m Reading</h2>
-          <div className="space-y-3">
-            {readingList.map((book, idx) => (
-              <div key={idx} className="flex items-start gap-3">
-                <span className="text-xl">📚</span>
-                <div>
-                  <p className="font-medium">
-                    {book.url ? (
-                      <a
-                        href={book.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline"
-                      >
-                        {book.title}
-                      </a>
-                    ) : (
-                      book.title
-                    )}
-                  </p>
-                  <p className="text-sm text-muted-foreground">{book.category}</p>
+                  <div className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                    {p.blurb}
+                  </div>
+                  <div className="mt-1.5 flex flex-wrap gap-1">
+                    {p.stack.map((s) => (
+                      <Tag key={s.name} tone={s.tone}>
+                        {s.name}
+                      </Tag>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-        </section>
+        </Tile>
 
-        {/* Latest Posts CTA */}
-        <section className="text-center py-8">
-          <Button asChild size="lg">
-            <Link href="/blog">View All Blog Posts</Link>
-          </Button>
-        </section>
-      </div>
+        {/* Certifications - scrolls, fades, never says "scroll" */}
+        <Tile span="md:col-start-1 md:col-end-3 md:row-start-6 md:row-end-8" className="px-0 pb-0">
+          <TileLabel icon="table" className="px-5">
+            Certifications
+          </TileLabel>
+          <FadeScroll label="Certifications">
+            <div className="grid grid-cols-[1fr_74px] items-center gap-2.5 border-b border-border px-5 py-[7px] text-[10.5px] font-semibold uppercase tracking-[0.06em] text-[var(--muted-foreground-2)]">
+              <span>Name</span>
+              <span>Issued</span>
+            </div>
+            {certifications.map((c) => (
+              <div
+                key={c.name}
+                className="grid grid-cols-[1fr_74px] items-center gap-2.5 border-b border-border px-5 py-[7px] text-[12.5px] last:border-b-0 hover:bg-[var(--hover)]"
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <Icon
+                    name={c.icon}
+                    className="size-3.5 shrink-0 text-[var(--muted-foreground-2)]"
+                  />
+                  <span className="truncate">{c.name}</span>
+                </span>
+                <span className="text-[11.5px] tabular-nums text-muted-foreground">
+                  {c.issued}
+                </span>
+              </div>
+            ))}
+          </FadeScroll>
+        </Tile>
+
+        {/* Reading */}
+        <Tile span="md:col-start-3 md:col-end-5 md:row-start-6 md:row-end-8" className="justify-center">
+          <TileLabel icon="books">Reading</TileLabel>
+          {reading.map((b) => (
+            <div
+              key={b.title}
+              className="flex items-start gap-2.5 rounded-xs px-1.5 py-[7px] hover:bg-[var(--hover)]"
+            >
+              <Icon
+                name={b.done ? 'check' : 'box'}
+                className={
+                  b.done
+                    ? 'mt-0.5 size-[15px] shrink-0 text-primary'
+                    : 'mt-0.5 size-[15px] shrink-0 text-[var(--muted-foreground-2)]'
+                }
+              />
+              <div>
+                <div
+                  className={
+                    b.done
+                      ? 'text-[13px] leading-snug text-[var(--muted-foreground-2)] line-through'
+                      : 'text-[13px] leading-snug'
+                  }
+                >
+                  {b.title}
+                </div>
+                <div className="mt-px text-[11.5px] text-[var(--muted-foreground-2)]">
+                  {b.author}
+                </div>
+              </div>
+            </div>
+          ))}
+        </Tile>
+
+        {/* Quote */}
+        <Tile span="md:col-start-5 md:col-end-7 md:row-start-7 md:row-end-8" className="justify-center">
+          <blockquote className="border-l-2 border-primary pl-4">
+            <p className="text-lg italic leading-snug">
+              Curious, tenacious and persistent &mdash; still going looking for
+              experiences I haven&rsquo;t had yet.
+            </p>
+          </blockquote>
+        </Tile>
+
+        {/* Away from the keyboard */}
+        <Tile
+          span="md:col-start-5 md:col-end-7 md:row-start-6 md:row-end-7"
+          muted
+          className="flex-row items-center gap-3.5"
+        >
+          <Icon name="paddle" className="size-10 shrink-0 text-muted-foreground" />
+          <p className="text-[13.5px] leading-normal">
+            Table tennis and badminton &mdash; and I like to think I&rsquo;m
+            good at it.
+          </p>
+        </Tile>
+      </Bento>
     </div>
   );
 }

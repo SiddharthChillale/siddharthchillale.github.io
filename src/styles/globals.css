@@ -5,10 +5,13 @@
 @theme inline {
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  /* Explicit scale. The old calc chain squashed every radius into 8-16px,
+     which made nested corners impossible to read as nested. */
+  --radius-xs: var(--radius-chip);
+  --radius-sm: var(--radius-inner);
+  --radius-md: 0.75rem;
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: var(--radius-shell);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -30,7 +33,31 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.875rem;         /* 14px - the tile */
+  --radius-shell: 1rem;       /* 16px - page shells */
+  --radius-inner: 0.5rem;     /* 8px  - nested inside a tile */
+  --radius-chip: 0.3125rem;   /* 5px  - chips, small buttons */
+
+  --stroke: 1.5px;            /* every drawn mark, everywhere */
+
+  /* Faint ink for labels and captions. The palette had nothing between
+     --muted-foreground and --border. */
+  --muted-foreground-2: #9C94A0;
+  /* --secondary at a weight that is actually readable as text.
+     #B3D4FF on #FDF8F6 is ~1.4:1. */
+  --secondary-ink: #5B7FB9;
+  --hover: #F7F2EE;
+
+  /* Tag tints, mixed from --primary and --secondary. */
+  --tag-coral-bg: rgb(229 115 115 / 0.15);
+  --tag-coral-fg: #96393A;
+  --tag-blue-bg: rgb(91 127 185 / 0.15);
+  --tag-blue-fg: #3A5A8C;
+  --tag-sand-bg: #F1EAE3;
+  --tag-sand-fg: #6A5C50;
+  --tag-lilac-bg: rgb(140 123 168 / 0.16);
+  --tag-lilac-fg: #5B4A75;
+
   --background: #FDF8F6;
   --foreground: #1A1A2E;
   --card: #FFFFFF;
@@ -52,6 +79,19 @@
 }
 
 .dark {
+  --muted-foreground-2: #77778C;
+  --secondary-ink: #8FB0E0;
+  --hover: #31315A;
+
+  --tag-coral-bg: rgb(255 138 128 / 0.2);
+  --tag-coral-fg: #FFB4AD;
+  --tag-blue-bg: rgb(74 111 165 / 0.34);
+  --tag-blue-fg: #A9C6EC;
+  --tag-sand-bg: #31315A;
+  --tag-sand-fg: #BDBACC;
+  --tag-lilac-bg: rgb(154 132 196 / 0.26);
+  --tag-lilac-fg: #C6B4E2;
+
   --background: #1A1A2E;
   --foreground: #F5F0EB;
   --card: #252542;
@@ -126,7 +166,63 @@ span[data-line] {
 }
 
 @utility container-custom {
-  @apply mx-auto max-w-[700px] px-4 md:px-6;
+  @apply mx-auto px-4 md:px-6;
+  max-width: var(--container-w, 700px);
+}
+
+/* A page can widen the shared container - header and footer included - by
+   rendering [data-wide]. Used by /about, where a 6-column bento needs the room.
+   Degrades to 700px if :has() is unavailable. */
+body:has([data-wide]) {
+  --container-w: 1040px;
+}
+
+/* =========================================================================
+   The line system. One stroke weight for every drawn mark on the site:
+   tile borders, icons, illustrations. Colour comes from currentColor so
+   both themes work without a single hard-coded hex.
+   ========================================================================= */
+.ln {
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+/* Load-bearing: without it a 46px icon and a 13px icon have visibly
+   different line weights and the whole conceit falls apart. */
+.ln * {
+  vector-effect: non-scaling-stroke;
+}
+
+/* Tags carry the only colour on the page. Things you install get a tag;
+   things you do get a line icon instead. */
+.tag {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12.5px] font-medium whitespace-nowrap;
+}
+.tag-coral  { background: var(--tag-coral-bg);  color: var(--tag-coral-fg); }
+.tag-blue   { background: var(--tag-blue-bg);   color: var(--tag-blue-fg); }
+.tag-sand   { background: var(--tag-sand-bg);   color: var(--tag-sand-fg); }
+.tag-lilac  { background: var(--tag-lilac-bg);  color: var(--tag-lilac-fg); }
+
+/* Scrolls without a scrollbar, and fades out at the foot so the extra rows
+   announce themselves instead of being labelled "scroll for more". */
+.fade-scroll {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent);
+}
+.fade-scroll::-webkit-scrollbar {
+  display: none;
+}
+/* Drop the fade once there is genuinely nothing below. */
+.fade-scroll[data-end] {
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 @utility text-balance {

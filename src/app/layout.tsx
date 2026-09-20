@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/layout/theme-provider';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/sonner';
+import { LineSprite } from '@/components/ui/line-icon';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
@@ -48,6 +49,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <LineSprite />
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>
