@@ -53,11 +53,10 @@
   --secondary-ink: #4F72A8;
   --hover: #F7F2EE;
 
-  /* Tag tints, mixed from --primary and --secondary. */
+  /* Tag tints. Coral is --primary; sand and lilac are warm neutrals, so the
+     cards stay on the warm side of the palette. */
   --tag-coral-bg: rgb(229 115 115 / 0.15);
   --tag-coral-fg: #96393A;
-  --tag-blue-bg: rgb(91 127 185 / 0.15);
-  --tag-blue-fg: #3A5A8C;
   --tag-sand-bg: #F1EAE3;
   --tag-sand-fg: #6A5C50;
   --tag-lilac-bg: rgb(140 123 168 / 0.16);
@@ -90,8 +89,6 @@
 
   --tag-coral-bg: rgb(255 138 128 / 0.2);
   --tag-coral-fg: #FFB4AD;
-  --tag-blue-bg: rgb(74 111 165 / 0.34);
-  --tag-blue-fg: #A9C6EC;
   --tag-sand-bg: #31315A;
   --tag-sand-fg: #BDBACC;
   --tag-lilac-bg: rgb(154 132 196 / 0.26);
@@ -208,7 +205,6 @@ body:has([data-wide]) {
   @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12.5px] font-medium whitespace-nowrap;
 }
 .tag-coral  { background: var(--tag-coral-bg);  color: var(--tag-coral-fg); }
-.tag-blue   { background: var(--tag-blue-bg);   color: var(--tag-blue-fg); }
 .tag-sand   { background: var(--tag-sand-bg);   color: var(--tag-sand-fg); }
 .tag-lilac  { background: var(--tag-lilac-bg);  color: var(--tag-lilac-fg); }
 

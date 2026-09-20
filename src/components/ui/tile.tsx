@@ -88,7 +88,7 @@ export function Tag({
   tone = 'sand',
   children,
 }: {
-  tone?: 'coral' | 'blue' | 'sand' | 'lilac';
+  tone?: 'coral' | 'sand' | 'lilac';
   children: React.ReactNode;
 }) {
   return <span className={cn('tag', `tag-${tone}`)}>{children}</span>;

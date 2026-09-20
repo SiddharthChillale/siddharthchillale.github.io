@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     'Siddharth Chillale - backend systems, cloud, and AI architecture.',
 };
 
-type Tone = 'coral' | 'blue' | 'sand' | 'lilac';
+type Tone = 'coral' | 'sand' | 'lilac';
 
 const socials: { label: string; handle: string; href: string; icon: IconName }[] =
   [
@@ -51,9 +51,9 @@ const tools: { name: string; tone: Tone }[] = [
   { name: 'Python', tone: 'coral' },
   { name: 'Go', tone: 'coral' },
   { name: 'C / C++', tone: 'coral' },
-  { name: 'PostgreSQL', tone: 'blue' },
-  { name: 'Docker', tone: 'blue' },
-  { name: 'AWS', tone: 'blue' },
+  { name: 'PostgreSQL', tone: 'sand' },
+  { name: 'Docker', tone: 'sand' },
+  { name: 'AWS', tone: 'sand' },
   { name: 'Linux', tone: 'sand' },
 ];
 
@@ -171,8 +171,8 @@ const projects: {
     icon: 'server',
     stack: [
       { name: 'Node', tone: 'coral' },
-      { name: 'PostgreSQL', tone: 'blue' },
-      { name: 'AWS', tone: 'blue' },
+      { name: 'PostgreSQL', tone: 'sand' },
+      { name: 'AWS', tone: 'sand' },
     ],
   },
   {
