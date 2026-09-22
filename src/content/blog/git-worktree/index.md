@@ -30,16 +30,18 @@ git worktree list
 git worktree remove ../my-project-feature-x
 ```
 
+![A shared .git object database at the top connects down to three worktree folders — main, feature-x and hotfix — each checked out to its own branch.](./images/worktree-architecture.svg)
+
 ## It's built into VS Code — no extension needed
 
-Here's the part most people miss: VS Code has native worktree support, and almost all ides support it by default.
+Here's the part most people miss: VS Code has native worktree support (added in version 1.103, July 2025), and several other editors support it by default too.
 
 1. Press `Ctrl+Shift+P` to open the Command Palette.
-2. Type and select **Worktree: Add** (or **Git: Create Worktree**, depending on your version).
+2. Type and select **Git: Create Worktree**.
 3. Choose a remote branch or create a new branch that you want in the new worktree.
 4. VS Code opens a new window pointed at that path.
 
-No marketplace extension, no extra tooling. You get a full editor window per worktree, each free to run its own terminal, its own dev server, its own everything. VS Code also shows you all the available worktrees and their own changed files view in its Git history panel.  
+No marketplace extension, no extra tooling. You get a full editor window per worktree, each free to run its own terminal, its own dev server, its own everything. VS Code also shows you all your worktrees, and their own changed-files view, in the Source Control view under Repositories.  
 
 ## My workflow: one feature, one worktree
 
@@ -67,6 +69,8 @@ If you switch to faster package manager like pnpm or bun or uv instead of npm or
 
 ## Why this beats the stash habit
 
+![With stashing, feature work pauses on one lane while you stash, switch, fix and switch back. With worktrees, the bug fix runs on its own lane while feature work keeps going undisturbed.](./images/stash-vs-worktree.svg)
+
 | With stashing                                        | With worktrees                                       |
 | ---------------------------------------------------- | ---------------------------------------------------- |
 | Interrupt work, stash, switch, fix, switch back, pop | Fix the bug in another directory; nothing pauses     |
@@ -87,11 +91,11 @@ The mental shift is small but lasting: stop thinking of your repository as one d
 
 ## Follow-up: configuring worktree creation natively in VS Code
 
-Since writing this post, VS Code added native (no extensions, no hooks) support for carrying git-ignored files into new worktrees. Condensed findings:
+VS Code's worktree tooling turned out to go further than the manual copy step described above — it has native (no extensions, no hooks) support for carrying git-ignored files into new worktrees. Condensed findings:
 
 ### git.worktreeIncludeFiles
 
-Added in VS Code 1.109 (January 2026), currently experimental. A list of glob patterns for files and folders that are copied into a new worktree when VS Code creates it:
+Added in VS Code 1.109 (January 2026). A list of glob patterns for files and folders that are copied into a new worktree when VS Code creates it:
 
 ```json
 "git.worktreeIncludeFiles": [
@@ -102,7 +106,7 @@ Added in VS Code 1.109 (January 2026), currently experimental. A list of glob pa
 ```
 
 - A file is copied only when it matches a pattern AND is in `.gitignore` — tracked files are never duplicated.
-- Applies both to worktrees created from the Source Control view (Repositories → ... → Worktrees → Create Worktree) and to worktrees VS Code creates for agent sessions — agent-host support landed in v1.129 (July 2026).
+- Applies both to worktrees created from the Source Control view (Repositories → ... → Worktrees → Create Worktree) and to worktrees VS Code creates for background agent sessions — the latter was the original motivation for the setting.
 - Default is an empty array; node_modules is not copied unless you list it.
 
 ### Copy vs symlink for node_modules
@@ -113,7 +117,7 @@ The supported way to get shared, near-free dependencies is a package manager wit
 
 ### Native initialization script (new)
 
-The Cursor-style init script is landing natively as a task option: in `tasks.json`, `"runOptions": { "runOn": "worktreeCreated" }` runs a task automatically whenever a worktree is created (e.g. `pnpm install`, `git submodule update`), including for agent sessions. Recent addition — check whether your VS Code version's tasks.json schema accepts it. There is also a `chat.agentHost.runWorktreeCreatedTasks` setting (defaults to true) controlling auto-dispatch for agent-host sessions.
+The Cursor-style init script landed natively as a task option in VS Code 1.112 (March 2026): in `tasks.json`, `"runOptions": { "runOn": "worktreeCreated" }` runs a task automatically whenever a worktree is created (e.g. `pnpm install`, `git submodule update`), including for agent sessions. Check whether your VS Code version's tasks.json schema accepts it before relying on it. Whether agent sessions auto-dispatch this task is governed by a related agent-host setting — search your Settings UI for "worktree" to find the current name, since it has shifted between releases.
 
 ### Related settings
 
