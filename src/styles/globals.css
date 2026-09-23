@@ -3,13 +3,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, sans-serif;
   --font-mono: var(--font-mono);
-  /* Explicit scale. The old calc chain squashed every radius into 8-16px,
-     which made nested corners impossible to read as nested. */
+  /* The Swiss layout draws square corners everywhere. The scale is kept so
+     components can still refer to it by name. */
   --radius-xs: var(--radius-chip);
   --radius-sm: var(--radius-inner);
-  --radius-md: 0.75rem;
+  --radius-md: 0;
   --radius-lg: var(--radius);
   --radius-xl: var(--radius-shell);
   --color-background: var(--background);
@@ -37,10 +38,10 @@
 }
 
 :root {
-  --radius: 0.875rem;         /* 14px - the tile */
-  --radius-shell: 1rem;       /* 16px - page shells */
-  --radius-inner: 0.5rem;     /* 8px  - nested inside a tile */
-  --radius-chip: 0.3125rem;   /* 5px  - chips, small buttons */
+  --radius: 0;
+  --radius-shell: 0;
+  --radius-inner: 0;
+  --radius-chip: 0;
 
   --stroke: 1.5px;            /* every drawn mark, everywhere */
 
@@ -109,12 +110,19 @@
   }
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  @apply font-semibold tracking-tight;
+/* Typography. Layered as a base default: unlayered, it outranked every
+   font-weight and tracking utility set on a heading. */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
 }
 
 /* Rehype Pretty Code */
+figure[data-rehype-pretty-code-figure] {
+  @apply my-6;
+}
+
 div[data-rehype-pretty-code-fragment] {
   @apply my-8 overflow-hidden rounded-lg border bg-zinc-950 text-[13px];
 }

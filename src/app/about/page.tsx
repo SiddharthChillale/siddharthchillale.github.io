@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import { Inter, Inter_Tight } from 'next/font/google';
 import { siteConfig } from '@/lib/config';
 import { Icon, type IconName } from '@/components/ui/line-icon';
+import { Section, label, posterTitle } from '@/components/ui/swiss';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -9,21 +9,6 @@ export const metadata: Metadata = {
   description:
     'Siddharth Chillale - AI engineering, full-stack development, and cloud infrastructure.',
 };
-
-// Swiss layout: one grotesk family for display, its text cut for body.
-// Scoped to this page so the rest of the site keeps its type.
-const display = Inter_Tight({
-  subsets: ['latin'],
-  weight: ['500', '700', '800'],
-  variable: '--font-display',
-  display: 'swap',
-});
-const text = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-text',
-  display: 'swap',
-});
 
 const disciplines: { name: string; icon: IconName }[] = [
   { name: 'AI Engineering', icon: 'bot' },
@@ -219,45 +204,9 @@ const reading: { title: string; author: string; done: boolean }[] = [
   { title: 'Architecture of Consoles', author: 'copetti.org', done: true },
 ];
 
-/** Small grotesk caps. The only label style on the page. */
-const label =
-  'font-[family-name:var(--font-display)] text-[11px] font-bold uppercase tracking-[0.12em]';
-
-/**
- * Every section is the same shape: a heavy rule across all twelve columns,
- * the heading in columns 1-4, the content in 5-12. On a phone the heading
- * simply sits on top.
- */
-function Section({
-  title,
-  icon,
-  children,
-}: {
-  title: string;
-  icon: IconName;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="mt-20 grid grid-cols-1 gap-x-6 gap-y-6 border-t-[3px] border-foreground pt-5 md:mt-28 md:grid-cols-12">
-      <h2 className="flex items-start gap-3 font-[family-name:var(--font-display)] text-[2rem] font-extrabold leading-none tracking-[-0.035em] md:col-span-4 md:text-[2.5rem]">
-        <Icon name={icon} className="mt-1 size-6 shrink-0 md:mt-1.5 md:size-7" />
-        {title}
-      </h2>
-      <div className="md:col-span-8">{children}</div>
-    </section>
-  );
-}
-
 export default function AboutPage() {
   return (
-    <div
-      data-wide
-      className={cn(
-        display.variable,
-        text.variable,
-        'container-custom pb-24 pt-4 font-[family-name:var(--font-text)] text-foreground',
-      )}
-    >
+    <div data-wide className="container-custom pb-24 pt-4">
       {/* Masthead: the three disciplines sit on the grid above the name. */}
       <header className="border-t-[6px] border-foreground pt-4">
         <ul className="grid grid-cols-1 gap-y-2 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-12">
@@ -272,9 +221,7 @@ export default function AboutPage() {
           ))}
         </ul>
 
-        {/* "Siddharth" sets at ~4.34em, so width / 4.4 runs it the full
-            measure. The cap is the 992px desktop measure over the same. */}
-        <h1 className="mt-10 font-[family-name:var(--font-display)] text-[calc((100vw-2rem)/4.4)] md:text-[clamp(3.25rem,calc((100vw-3rem)/4.4),14rem)] font-extrabold leading-[0.8] tracking-[-0.055em] md:mt-14">
+        <h1 className={cn(posterTitle, 'mt-10 md:mt-14')}>
           Siddharth
           <br />
           Chillale
@@ -292,7 +239,7 @@ export default function AboutPage() {
         </div>
 
         <div className="flex flex-col md:col-span-8">
-          <p className="font-[family-name:var(--font-display)] text-[1.5rem] font-medium leading-[1.2] tracking-[-0.02em] md:text-[2rem]">
+          <p className="font-display text-[1.5rem] font-medium leading-[1.2] tracking-[-0.02em] md:text-[2rem]">
             I build AI-powered applications that hold up past the demo &mdash;
             human-in-the-loop workflows, evaluation frameworks, and the
             full-stack, cloud infrastructure underneath them.
@@ -325,11 +272,11 @@ export default function AboutPage() {
               key={era.org}
               className="grid grid-cols-[5.5rem_1fr] gap-x-6 border-t border-border py-5 first:border-t-0 first:pt-0 sm:grid-cols-8"
             >
-              <span className="font-[family-name:var(--font-display)] text-lg font-bold tabular-nums leading-tight tracking-[-0.02em] sm:col-span-2">
+              <span className="font-display text-lg font-bold tabular-nums leading-tight tracking-[-0.02em] sm:col-span-2">
                 {era.period}
               </span>
               <div className="sm:col-span-6">
-                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold leading-tight tracking-[-0.02em]">
+                <h3 className="font-display text-xl font-bold leading-tight tracking-[-0.02em]">
                   {era.org}
                 </h3>
                 <div className="mt-2 flex flex-col gap-2">
@@ -360,7 +307,7 @@ export default function AboutPage() {
                 <Icon name={p.icon} className="size-6" />
                 <span className={cn(label, 'tabular-nums')}>{p.when}</span>
               </div>
-              <h3 className="mt-6 font-[family-name:var(--font-display)] text-[1.75rem] font-extrabold leading-none tracking-[-0.035em]">
+              <h3 className="mt-6 font-display text-[1.75rem] font-extrabold leading-none tracking-[-0.035em]">
                 {p.title}
               </h3>
               <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
@@ -400,7 +347,7 @@ export default function AboutPage() {
               {tools.map((t) => (
                 <li
                   key={t}
-                  className="border-b border-border py-3 font-[family-name:var(--font-display)] text-[15px] font-bold tracking-[-0.01em]"
+                  className="border-b border-border py-3 font-display text-[15px] font-bold tracking-[-0.01em]"
                 >
                   {t}
                 </li>
@@ -441,7 +388,7 @@ export default function AboutPage() {
       </Section>
 
       <Section title="Off the clock" icon="books">
-        <blockquote className="font-[family-name:var(--font-display)] text-[1.5rem] font-bold leading-[1.15] tracking-[-0.025em] md:text-[2rem]">
+        <blockquote className="font-display text-[1.5rem] font-bold leading-[1.15] tracking-[-0.025em] md:text-[2rem]">
           Curious, tenacious and persistent &mdash; still going looking for
           experiences I haven&rsquo;t had yet.
         </blockquote>
@@ -505,7 +452,7 @@ export default function AboutPage() {
                 className="group flex items-center gap-4 py-4 outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 focus-visible:ring-offset-background"
               >
                 <Icon name={s.icon} className="size-6 shrink-0" />
-                <span className="font-[family-name:var(--font-display)] text-[1.75rem] font-extrabold leading-none tracking-[-0.035em] md:text-[2.25rem]">
+                <span className="font-display text-[1.75rem] font-extrabold leading-none tracking-[-0.035em] md:text-[2.25rem]">
                   {s.label}
                 </span>
                 <span className="ml-auto text-[14px] text-muted-foreground transition-colors group-hover:text-foreground">

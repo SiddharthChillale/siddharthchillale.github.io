@@ -28,8 +28,8 @@ export function Header() {
   return (
     <header className="py-8">
       <div className="container-custom flex items-center justify-between">
-        <Link href="/" className="group flex items-center gap-1 font-medium text-sm">
-          <span className="text-foreground tracking-tight">siddharth chillale</span>
+        <Link href="/" className="group flex items-center gap-1 font-display text-[15px] font-bold">
+          <span className="text-foreground tracking-[-0.02em]">siddharth chillale</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-4">

@@ -76,11 +76,25 @@ function readEntry(collection: Collection, slug: string): Post | null {
     summary: entry.summary,
     categories: entry.categories,
     tags: entry.tags,
-    cover: entry.cover,
+    cover: resolveCover(collection, slug, entry.cover),
     draft: entry.draft,
     showToc: entry.showToc,
     content,
   };
+}
+
+/**
+ * Covers are written relative to the post (`./images/foo.png`), which only
+ * resolves on the post's own page. Listings render them too, so rewrite them
+ * to the path `sync:assets` publishes them under.
+ */
+function resolveCover(
+  collection: Collection,
+  slug: string,
+  cover: PostMeta['cover'],
+): PostMeta['cover'] {
+  if (!cover || !cover.image.startsWith('./')) return cover;
+  return { ...cover, image: `/${collection}/${slug}/${cover.image.slice(2)}` };
 }
 
 function toMeta({ content: _content, ...meta }: Post): PostMeta {

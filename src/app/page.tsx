@@ -1,90 +1,106 @@
 import Link from 'next/link';
-import { getPosts } from '@/lib/content';
+import { getPosts, getProjects } from '@/lib/content';
 import { siteConfig } from '@/lib/config';
-import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/animations';
+import { ProjectCard } from '@/components/project-card';
+import { Masthead, Section, LabelLink, label } from '@/components/ui/swiss';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const recentPosts = getPosts().slice(0, 5);
+  const recentProjects = getProjects().slice(0, 2);
 
   return (
-    <div className="container-custom py-20 overflow-hidden">
-      <section className="mb-20">
-        <FadeIn direction="up" distance={10} delay={0.1}>
-          <h1 className="text-3xl font-semibold mb-6 tracking-tight">
-            Siddharth Chillale
-          </h1>
-        </FadeIn>
-        <FadeIn direction="up" distance={10} delay={0.2}>
-          <p className="text-sm font-medium text-secondary-ink mb-8 max-w-[600px] leading-relaxed">
-            {siteConfig.description}
-          </p>
-        </FadeIn>
-        <FadeIn direction="up" distance={10} delay={0.3}>
-          <div className="flex flex-wrap gap-4 text-xs font-medium lowercase">
-            <a 
-              href={siteConfig.github} 
-              target="_blank" 
-              className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 decoration-border"
-            >
-              github
-            </a>
-            <a 
-              href={siteConfig.linkedin} 
-              target="_blank" 
-              className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 decoration-border"
-            >
-              linkedin
-            </a>
-            <Link 
-              href="/blog" 
-              className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 decoration-border"
-            >
-              writing
-            </Link>
+    <div data-wide className="container-custom pb-24 pt-4">
+      <Masthead
+        meta={
+          <div className="grid grid-cols-2 gap-x-6 md:grid-cols-12">
+            {/* The page's h1, set small: the photo and title below carry it. */}
+            <h1 className={cn(label, 'md:col-span-4')}>{siteConfig.author}</h1>
+            <p className={cn(label, 'text-right md:col-span-8 md:text-left')}>
+              Pune, Maharashtra
+            </p>
           </div>
-        </FadeIn>
-      </section>
+        }
+      >
+        <div className="grid grid-cols-1 gap-x-6 gap-y-8 md:grid-cols-12">
+          <div className="relative aspect-square w-full max-w-[320px] overflow-hidden bg-muted md:col-span-4 md:max-w-none">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/profile/SiddharthChillale_square.jpg"
+              alt="Siddharth Chillale"
+              className="absolute inset-0 size-full object-cover object-[50%_20%]"
+            />
+          </div>
 
-      <section className="mt-20">
-        <FadeIn direction="up" distance={10} delay={0.4}>
-          <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-8">Recent Writing</h2>
-        </FadeIn>
+          <div className="flex flex-col md:col-span-8">
+            <p className="font-display text-[2.5rem] font-extrabold leading-[0.95] tracking-[-0.04em] text-balance md:text-[4rem]">
+              Senior Software Engineer
+            </p>
+            <p className="mt-3 font-display text-[1.375rem] font-bold leading-tight tracking-[-0.02em] md:text-[1.75rem]">
+              AI/LLM Systems &amp; Cloud Architecture
+            </p>
+            <p className="mb-8 mt-6 max-w-[58ch] text-[17px] leading-relaxed text-muted-foreground">
+              I specialise in AI-powered and agentic systems &mdash; entity
+              resolution, LLM evaluation pipelines and document intelligence
+              &mdash; built on secure, scalable cloud infrastructure. I work
+              across the whole path from prompt and agent design to IaC-driven
+              deployment, and mentor the engineers alongside me.
+            </p>
+            <nav
+              aria-label="Elsewhere"
+              className="mt-auto flex flex-wrap gap-x-5 gap-y-2 border-t border-foreground pt-3"
+            >
+              <LabelLink href="/about">About me</LabelLink>
+              <LabelLink href="/docs/siddharth-chillale-resume.pdf">Résumé</LabelLink>
+              <LabelLink href={siteConfig.github}>GitHub</LabelLink>
+              <LabelLink href={siteConfig.linkedin}>LinkedIn</LabelLink>
+            </nav>
+          </div>
+        </div>
+      </Masthead>
 
-        <StaggerContainer
-          staggerChildren={0.05}
-          delayChildren={0.5}
-          className="flex flex-col gap-6"
-        >
+      <Section title="Writing" icon="pen">
+        <ol>
           {recentPosts.map((post) => (
-            <StaggerItem key={post.slug}>
+            <li
+              key={post.slug}
+              className="border-t border-border first:border-t-0 first:[&>a]:pt-0"
+            >
               <Link
                 href={`/blog/${post.slug}`}
-                className="group flex items-baseline justify-between py-1"
+                className="group grid grid-cols-[4.5rem_1fr] items-baseline gap-x-6 py-4 sm:grid-cols-[6rem_1fr]"
               >
-                <span className="text-sm font-medium group-hover:text-secondary-ink transition-colors truncate pr-4">
-                  {post.title}
-                </span>
-                <time className="text-xs font-medium text-muted-foreground/60 tabular-nums shrink-0">
+                <time
+                  dateTime={post.date}
+                  className={cn(label, 'tabular-nums text-muted-foreground')}
+                >
                   {new Date(post.date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
                   })}
                 </time>
+                <span className="font-display text-[1.25rem] font-bold leading-[1.2] tracking-[-0.02em] text-balance underline decoration-transparent decoration-2 underline-offset-[4px] transition-colors group-hover:decoration-foreground">
+                  {post.title}
+                </span>
               </Link>
-            </StaggerItem>
+            </li>
           ))}
-          
-          <StaggerItem>
-            <Link 
-              href="/blog" 
-              className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mt-4 inline-block"
-            >
-              view all →
-            </Link>
-          </StaggerItem>
-        </StaggerContainer>
-      </section>
+        </ol>
+        <LabelLink href="/blog" className="mt-8">
+          All writing &rarr;
+        </LabelLink>
+      </Section>
+
+      <Section title="Projects" icon="cube">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2">
+          {recentProjects.map((project) => (
+            <ProjectCard key={project.slug} project={project} heading="h3" />
+          ))}
+        </div>
+        <LabelLink href="/projects" className="mt-10">
+          All projects &rarr;
+        </LabelLink>
+      </Section>
     </div>
   );
 }
-

@@ -1,47 +1,87 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getPosts } from '@/lib/content';
-import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/animations';
+import { getPosts, type PostMeta } from '@/lib/content';
+import { Masthead, label, posterTitle } from '@/components/ui/swiss';
+import { cn } from '@/lib/utils';
+
+export const metadata: Metadata = {
+  title: 'Writing',
+  description: 'Posts by Siddharth Chillale on software, tools and rendering.',
+};
+
+/** Posts are already newest first, so years come out in order too. */
+function byYear(posts: PostMeta[]) {
+  const groups = new Map<number, PostMeta[]>();
+  for (const post of posts) {
+    const year = new Date(post.date).getFullYear();
+    groups.set(year, [...(groups.get(year) ?? []), post]);
+  }
+  return [...groups];
+}
 
 export default function BlogPage() {
   const posts = getPosts();
+  const years = byYear(posts);
 
   return (
-    <div className="container-custom py-20">
-      <FadeIn direction="up" distance={10} delay={0.1}>
-        <h1 className="text-3xl font-semibold mb-12 tracking-tight">Writing</h1>
-      </FadeIn>
-
-      <StaggerContainer 
-        staggerChildren={0.05} 
-        delayChildren={0.2} 
-        className="flex flex-col gap-10"
+    <div data-wide className="container-custom pb-24 pt-4">
+      <Masthead
+        meta={
+          <div className={cn(label, 'flex justify-between gap-4')}>
+            <span>
+              {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+            </span>
+            {years.length > 0 && (
+              <span className="tabular-nums">
+                {years[years.length - 1][0]}&ndash;{years[0][0]}
+              </span>
+            )}
+          </div>
+        }
       >
-        {posts.map((post) => (
-          <StaggerItem key={post.slug}>
-            <Link
-              href={`/blog/${post.slug}`}
-              className="group block"
-            >
-              <div className="flex flex-col gap-1">
-                <div className="flex items-baseline justify-between">
-                  <h2 className="text-sm font-semibold group-hover:text-secondary-ink transition-colors leading-tight">
+        <h1 className={posterTitle}>Writing</h1>
+      </Masthead>
+
+      {/* The year is the section: it sits in the margin, posts to its right. */}
+      {years.map(([year, group]) => (
+        <section
+          key={year}
+          className="mt-14 grid grid-cols-1 gap-x-6 gap-y-4 border-t-[3px] border-foreground pt-5 md:mt-20 md:grid-cols-12"
+        >
+          <h2 className="font-display text-[2.5rem] font-extrabold leading-none tracking-[-0.04em] tabular-nums md:col-span-4 md:text-[3.5rem]">
+            {year}
+          </h2>
+          <ol className="md:col-span-8">
+            {group.map((post) => (
+              <li
+                key={post.slug}
+                className="border-t border-border first:border-t-0 first:[&>a]:pt-0"
+              >
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group grid grid-cols-[1fr_auto] gap-x-6 py-5"
+                >
+                  <h3 className="font-display text-[1.375rem] font-bold leading-[1.15] tracking-[-0.025em] text-balance underline decoration-transparent decoration-2 underline-offset-[4px] transition-colors group-hover:decoration-foreground">
                     {post.title}
-                  </h2>
-                  <time className="text-xs font-medium text-muted-foreground/40 tabular-nums">
+                  </h3>
+                  <time
+                    dateTime={post.date}
+                    className={cn(label, 'pt-1.5 tabular-nums text-muted-foreground')}
+                  >
                     {new Date(post.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
                       month: 'short',
+                      day: 'numeric',
                     })}
                   </time>
-                </div>
-                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed opacity-70">
-                  {post.summary}
-                </p>
-              </div>
-            </Link>
-          </StaggerItem>
-        ))}
-      </StaggerContainer>
+                  <p className="col-span-2 mt-2 line-clamp-2 max-w-[62ch] text-[14px] leading-relaxed text-muted-foreground">
+                    {post.summary}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Inter, Inter_Tight } from 'next/font/google';
 import { siteConfig } from '@/lib/config';
 import { ThemeProvider } from '@/components/layout/theme-provider';
 import { Header } from '@/components/layout/header';
@@ -6,6 +7,18 @@ import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/sonner';
 import { LineSprite } from '@/components/ui/line-icon';
 import '@/styles/globals.css';
+
+// One grotesk family: Inter Tight for display, Inter for running text.
+const text = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+const display = Inter_Tight({
+  subsets: ['latin'],
+  variable: '--font-inter-tight',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -40,7 +53,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${text.variable} ${display.variable}`}
+      suppressHydrationWarning
+    >
       <head />
       <body className="min-h-screen bg-background font-sans antialiased selection:bg-neutral-100 dark:selection:bg-neutral-900">
         <ThemeProvider
