@@ -7,7 +7,7 @@ import { FadeScroll } from '@/components/ui/fade-scroll';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Siddharth Chillale - backend systems, cloud, and AI architecture.',
+    'Siddharth Chillale - AI engineering, full-stack development, and cloud infrastructure.',
 };
 
 type Tone = 'coral' | 'sand' | 'lilac';
@@ -47,21 +47,22 @@ const socials: { label: string; handle: string; href: string; icon: IconName }[]
   ];
 
 const tools: { name: string; tone: Tone }[] = [
-  { name: 'Node.js', tone: 'coral' },
   { name: 'Python', tone: 'coral' },
-  { name: 'Go', tone: 'coral' },
-  { name: 'C / C++', tone: 'coral' },
+  { name: 'TypeScript', tone: 'coral' },
+  { name: 'C#', tone: 'coral' },
+  { name: 'SQL', tone: 'coral' },
   { name: 'PostgreSQL', tone: 'sand' },
+  { name: 'MongoDB', tone: 'sand' },
   { name: 'Docker', tone: 'sand' },
   { name: 'AWS', tone: 'sand' },
-  { name: 'Linux', tone: 'sand' },
+  { name: 'Azure', tone: 'sand' },
 ];
 
 const domains: { name: string; icon: IconName }[] = [
-  { name: 'Backend architecture', icon: 'server' },
-  { name: 'Distributed systems', icon: 'flow' },
-  { name: 'Agent workflows & MCP', icon: 'bot' },
-  { name: 'Retrieval & extraction', icon: 'search' },
+  { name: 'AI engineering & agents', icon: 'bot' },
+  { name: 'Full-stack development', icon: 'server' },
+  { name: 'Cloud infrastructure', icon: 'cloud' },
+  { name: 'Agentic RAG & retrieval', icon: 'search' },
 ];
 
 const timeline: {
@@ -76,8 +77,12 @@ const timeline: {
     open: true,
     rows: [
       {
-        title: 'Backend systems & AI architecture',
+        title: 'Senior Software Engineer, AI & Full-Stack',
         detail: 'Pune, Maharashtra',
+      },
+      {
+        title: 'Gamma · Notisphere · CRIA',
+        detail: 'Proposal automation, medical recalls, impact analysis',
       },
     ],
   },
@@ -143,59 +148,65 @@ const projects: {
   stack: { name: string; tone: Tone }[];
 }[] = [
   {
-    title: 'Agent workflows on MCP',
-    when: 'IncubXperts',
-    blurb: 'Agents wired to internal tools through MCP servers.',
+    title: 'Gamma',
+    when: '2026',
+    blurb:
+      'AI proposal engine that ranks prospects and drafts personalised outreach, cutting manual release effort by ~80%.',
     icon: 'bot',
     stack: [
-      { name: 'MCP', tone: 'lilac' },
-      { name: 'Agents', tone: 'lilac' },
+      { name: 'Next.js', tone: 'coral' },
+      { name: 'Openrouter', tone: 'lilac' },
+      { name: 'AWS', tone: 'sand' },
     ],
   },
   {
-    title: 'RAG & extraction pipelines',
-    when: 'IncubXperts',
+    title: 'Notisphere',
+    when: '2025-26',
     blurb:
-      'Retrieval and document extraction built for production reliability rather than demo accuracy.',
+      'Medical recall platform moving supplier-to-provider notices off paper, with AI document parsing and entity resolution.',
+    icon: 'server',
+    stack: [
+      { name: 'Vue', tone: 'coral' },
+      { name: 'ASP.NET Core', tone: 'coral' },
+      { name: 'AWS Bedrock', tone: 'sand' },
+    ],
+  },
+  {
+    title: 'CRIA',
+    when: '2025',
+    blurb:
+      'Change-request impact analyzer over Jira, Confluence and code - 2nd place, IncubXperts AI Hackathon 2025.',
     icon: 'search',
     stack: [
-      { name: 'RAG', tone: 'lilac' },
-      { name: 'Python', tone: 'coral' },
+      { name: 'FastAPI', tone: 'coral' },
+      { name: 'CrewAI', tone: 'lilac' },
+      { name: 'Pinecone', tone: 'sand' },
     ],
   },
   {
-    title: 'Team Assignment Platform',
-    when: '2024',
+    title: 'TeamAssign',
+    when: '2023',
     blurb:
       'JWT auth and role-based access, containerised, CI/CD into ECR and EC2.',
-    icon: 'server',
+    icon: 'db',
     stack: [
       { name: 'Node', tone: 'coral' },
       { name: 'PostgreSQL', tone: 'sand' },
       { name: 'AWS', tone: 'sand' },
     ],
   },
-  {
-    title: 'Taco-DB',
-    when: '2022',
-    blurb:
-      'A relational engine - joins, aggregations, B-tree indexing and query optimisation.',
-    icon: 'db',
-    stack: [
-      { name: 'C++', tone: 'coral' },
-      { name: 'Linux', tone: 'sand' },
-    ],
-  },
 ];
 
 const certifications: { name: string; issued: string; icon: IconName }[] = [
-  { name: 'Claude Certified Architect', issued: 'Aug 2026', icon: 'award' },
+  {
+    name: 'Claude Certified Architect - Professional',
+    issued: 'Aug 2026',
+    icon: 'award',
+  },
   { name: 'Certified SAFe® Practitioner', issued: 'Jan 2026', icon: 'award' },
-  { name: 'Graph Data Modeling - Neo4j', issued: 'Feb 2025', icon: 'doc' },
   { name: 'AWS Cloud Practitioner', issued: 'Jul 2023', icon: 'award' },
   { name: 'Deep Learning Specialization', issued: '2020', icon: 'doc' },
   { name: 'Machine Learning - Stanford', issued: '2020', icon: 'doc' },
-  { name: 'Probability & Statistics', issued: '2020', icon: 'doc' },
 ];
 
 const reading: { title: string; author: string; done: boolean }[] = [
@@ -228,7 +239,7 @@ export default function AboutPage() {
             Siddharth Chillale
           </h1>
           <p className="text-center text-[12.5px] text-muted-foreground">
-            Backend Systems &middot; Cloud &middot; AI Architecture
+            AI Engineering &middot; Full-Stack &middot; Cloud Infrastructure
           </p>
         </Tile>
 
@@ -236,10 +247,10 @@ export default function AboutPage() {
         <Tile span="md:col-start-3 md:col-end-7 md:row-start-1 md:row-end-2" muted className="flex-row items-center gap-3.5">
           <Icon name="server" className="size-6 shrink-0 text-primary" />
           <p className="text-[15px] leading-relaxed">
-            I build scalable, efficient backend systems &mdash; lately the kind
-            that carry AI workloads past the demo and into production: RAG
-            pipelines, agent workflows, extraction. I also read books, and read
-            books about writing programs.
+            I build AI-powered applications that hold up past the demo &mdash;
+            human-in-the-loop workflows, evaluation frameworks, and the
+            full-stack, cloud infrastructure underneath them. I also read
+            books, and read books about writing programs.
           </p>
         </Tile>
 
