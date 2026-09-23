@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
+import { Inter, Inter_Tight } from 'next/font/google';
 import { siteConfig } from '@/lib/config';
 import { Icon, type IconName } from '@/components/ui/line-icon';
-import { Bento, Tile, TileLabel, Tag } from '@/components/ui/tile';
-import { FadeScroll } from '@/components/ui/fade-scroll';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'About',
@@ -10,7 +10,26 @@ export const metadata: Metadata = {
     'Siddharth Chillale - AI engineering, full-stack development, and cloud infrastructure.',
 };
 
-type Tone = 'coral' | 'sand' | 'lilac';
+// Swiss layout: one grotesk family for display, its text cut for body.
+// Scoped to this page so the rest of the site keeps its type.
+const display = Inter_Tight({
+  subsets: ['latin'],
+  weight: ['500', '700', '800'],
+  variable: '--font-display',
+  display: 'swap',
+});
+const text = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-text',
+  display: 'swap',
+});
+
+const disciplines: { name: string; icon: IconName }[] = [
+  { name: 'AI Engineering', icon: 'bot' },
+  { name: 'Full-Stack', icon: 'server' },
+  { name: 'Cloud Infrastructure', icon: 'cloud' },
+];
 
 const socials: { label: string; handle: string; href: string; icon: IconName }[] =
   [
@@ -34,7 +53,7 @@ const socials: { label: string; handle: string; href: string; icon: IconName }[]
     },
     {
       label: 'Email',
-      handle: 'say hello',
+      handle: 'Say hello',
       href: `mailto:${siteConfig.email}`,
       icon: 'mail',
     },
@@ -46,16 +65,16 @@ const socials: { label: string; handle: string; href: string; icon: IconName }[]
     },
   ];
 
-const tools: { name: string; tone: Tone }[] = [
-  { name: 'Python', tone: 'coral' },
-  { name: 'TypeScript', tone: 'coral' },
-  { name: 'C#', tone: 'coral' },
-  { name: 'SQL', tone: 'coral' },
-  { name: 'PostgreSQL', tone: 'sand' },
-  { name: 'MongoDB', tone: 'sand' },
-  { name: 'Docker', tone: 'sand' },
-  { name: 'AWS', tone: 'sand' },
-  { name: 'Azure', tone: 'sand' },
+const tools = [
+  'Python',
+  'TypeScript',
+  'C#',
+  'SQL',
+  'PostgreSQL',
+  'MongoDB',
+  'Docker',
+  'AWS',
+  'Azure',
 ];
 
 const domains: { name: string; icon: IconName }[] = [
@@ -68,13 +87,11 @@ const domains: { name: string; icon: IconName }[] = [
 const timeline: {
   org: string;
   period: string;
-  open?: boolean;
   rows: { title: string; detail: string }[];
 }[] = [
   {
     org: 'IncubXperts',
     period: 'Now',
-    open: true,
     rows: [
       {
         title: 'Senior Software Engineer, AI & Full-Stack',
@@ -88,11 +105,11 @@ const timeline: {
   },
   {
     org: 'CodersData LLC',
-    period: '2023-24',
+    period: '2023–24',
     rows: [
       {
         title: 'Data Management Analyst',
-        detail: 'Remote - Python, Power BI',
+        detail: 'Remote — Python, Power BI',
       },
       {
         title: 'Dashboards and ETL automation',
@@ -102,7 +119,7 @@ const timeline: {
   },
   {
     org: 'University at Buffalo',
-    period: '2022-23',
+    period: '2022–23',
     rows: [
       { title: 'Backend Developer', detail: 'Node.js, Express, MySQL' },
       {
@@ -113,7 +130,7 @@ const timeline: {
   },
   {
     org: 'MS Computer Science',
-    period: '2021-23',
+    period: '2021–23',
     rows: [
       {
         title: 'University at Buffalo, SUNY',
@@ -125,12 +142,12 @@ const timeline: {
     org: 'ShiP.py',
     period: '2020',
     rows: [
-      { title: 'Teaching Assistant', detail: 'Learning to Py - Texas A&M' },
+      { title: 'Teaching Assistant', detail: 'Learning to Py — Texas A&M' },
     ],
   },
   {
     org: 'B.Tech, Computer Science',
-    period: '2017-21',
+    period: '2017–21',
     rows: [
       {
         title: 'IIIT Tiruchirappalli',
@@ -145,7 +162,7 @@ const projects: {
   when: string;
   blurb: string;
   icon: IconName;
-  stack: { name: string; tone: Tone }[];
+  stack: string[];
 }[] = [
   {
     title: 'Gamma',
@@ -153,35 +170,23 @@ const projects: {
     blurb:
       'AI proposal engine that ranks prospects and drafts personalised outreach, cutting manual release effort by ~80%.',
     icon: 'bot',
-    stack: [
-      { name: 'Next.js', tone: 'coral' },
-      { name: 'Openrouter', tone: 'lilac' },
-      { name: 'AWS', tone: 'sand' },
-    ],
+    stack: ['Next.js', 'Openrouter', 'AWS'],
   },
   {
     title: 'Notisphere',
-    when: '2025-26',
+    when: '2025–26',
     blurb:
       'Medical recall platform moving supplier-to-provider notices off paper, with AI document parsing and entity resolution.',
     icon: 'server',
-    stack: [
-      { name: 'Vue', tone: 'coral' },
-      { name: 'ASP.NET Core', tone: 'coral' },
-      { name: 'AWS Bedrock', tone: 'sand' },
-    ],
+    stack: ['Vue', 'ASP.NET Core', 'AWS Bedrock'],
   },
   {
     title: 'CRIA',
     when: '2025',
     blurb:
-      'Change-request impact analyzer over Jira, Confluence and code - 2nd place, IncubXperts AI Hackathon 2025.',
+      'Change-request impact analyzer over Jira, Confluence and code — 2nd place, IncubXperts AI Hackathon 2025.',
     icon: 'search',
-    stack: [
-      { name: 'FastAPI', tone: 'coral' },
-      { name: 'CrewAI', tone: 'lilac' },
-      { name: 'Pinecone', tone: 'sand' },
-    ],
+    stack: ['FastAPI', 'CrewAI', 'Pinecone'],
   },
   {
     title: 'TeamAssign',
@@ -189,24 +194,20 @@ const projects: {
     blurb:
       'JWT auth and role-based access, containerised, CI/CD into ECR and EC2.',
     icon: 'db',
-    stack: [
-      { name: 'Node', tone: 'coral' },
-      { name: 'PostgreSQL', tone: 'sand' },
-      { name: 'AWS', tone: 'sand' },
-    ],
+    stack: ['Node', 'PostgreSQL', 'AWS'],
   },
 ];
 
 const certifications: { name: string; issued: string; icon: IconName }[] = [
   {
-    name: 'Claude Certified Architect - Professional',
+    name: 'Claude Certified Architect — Professional',
     issued: 'Aug 2026',
     icon: 'award',
   },
   { name: 'Certified SAFe® Practitioner', issued: 'Jan 2026', icon: 'award' },
   { name: 'AWS Cloud Practitioner', issued: 'Jul 2023', icon: 'award' },
   { name: 'Deep Learning Specialization', issued: '2020', icon: 'doc' },
-  { name: 'Machine Learning - Stanford', issued: '2020', icon: 'doc' },
+  { name: 'Machine Learning — Stanford', issued: '2020', icon: 'doc' },
 ];
 
 const reading: { title: string; author: string; done: boolean }[] = [
@@ -218,270 +219,307 @@ const reading: { title: string; author: string; done: boolean }[] = [
   { title: 'Architecture of Consoles', author: 'copetti.org', done: true },
 ];
 
+/** Small grotesk caps. The only label style on the page. */
+const label =
+  'font-[family-name:var(--font-display)] text-[11px] font-bold uppercase tracking-[0.12em]';
+
+/**
+ * Every section is the same shape: a heavy rule across all twelve columns,
+ * the heading in columns 1-4, the content in 5-12. On a phone the heading
+ * simply sits on top.
+ */
+function Section({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: IconName;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="mt-20 grid grid-cols-1 gap-x-6 gap-y-6 border-t-[3px] border-foreground pt-5 md:mt-28 md:grid-cols-12">
+      <h2 className="flex items-start gap-3 font-[family-name:var(--font-display)] text-[2rem] font-extrabold leading-none tracking-[-0.035em] md:col-span-4 md:text-[2.5rem]">
+        <Icon name={icon} className="mt-1 size-6 shrink-0 md:mt-1.5 md:size-7" />
+        {title}
+      </h2>
+      <div className="md:col-span-8">{children}</div>
+    </section>
+  );
+}
+
 export default function AboutPage() {
   return (
-    <div data-wide className="container-custom py-8">
-      <Bento>
-        {/* Portrait - the only tonal thing on a page made of line */}
-        <Tile span="md:col-start-1 md:col-end-3 md:row-start-1 md:row-end-4" className="items-center gap-0.5">
-          {/* Mobile rows are content-sized, so `flex-1` has nothing to fill and
-              the portrait collapses to a sliver. Give it a real aspect ratio
-              there, and only let it fill the tile once rows are fixed at md. */}
-          <div className="relative w-full max-w-[280px] overflow-hidden rounded-sm bg-muted aspect-square md:aspect-auto md:min-h-0 md:max-w-none md:flex-1">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/profile/SiddharthChillale_square.jpg"
-              alt="Siddharth Chillale"
-              className="absolute inset-0 size-full object-cover object-[50%_20%]"
-            />
-          </div>
-          <h1 className="mt-2.5 text-center text-2xl font-normal leading-tight">
-            Siddharth Chillale
-          </h1>
-          <p className="text-center text-[12.5px] text-muted-foreground">
-            AI Engineering &middot; Full-Stack &middot; Cloud Infrastructure
-          </p>
-        </Tile>
+    <div
+      data-wide
+      className={cn(
+        display.variable,
+        text.variable,
+        'container-custom pb-24 pt-4 font-[family-name:var(--font-text)] text-foreground',
+      )}
+    >
+      {/* Masthead: the three disciplines sit on the grid above the name. */}
+      <header className="border-t-[6px] border-foreground pt-4">
+        <ul className="grid grid-cols-1 gap-y-2 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-12">
+          {disciplines.map((d) => (
+            <li
+              key={d.name}
+              className={cn('flex items-center gap-2.5 md:col-span-4', label)}
+            >
+              <Icon name={d.icon} className="size-4 shrink-0" />
+              {d.name}
+            </li>
+          ))}
+        </ul>
 
-        {/* Callout - the only tile allowed a fill */}
-        <Tile span="md:col-start-3 md:col-end-7 md:row-start-1 md:row-end-2" muted className="flex-row items-center gap-3.5">
-          <Icon name="server" className="size-6 shrink-0 text-primary" />
-          <p className="text-[15px] leading-relaxed">
+        {/* "Siddharth" sets at ~4.34em, so width / 4.4 runs it the full
+            measure. The cap is the 992px desktop measure over the same. */}
+        <h1 className="mt-10 font-[family-name:var(--font-display)] text-[calc((100vw-2rem)/4.4)] md:text-[clamp(3.25rem,calc((100vw-3rem)/4.4),14rem)] font-extrabold leading-[0.8] tracking-[-0.055em] md:mt-14">
+          Siddharth
+          <br />
+          Chillale
+        </h1>
+      </header>
+
+      <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-8 border-t border-foreground pt-6 md:mt-16 md:grid-cols-12">
+        <div className="relative aspect-square w-full max-w-[320px] overflow-hidden bg-muted md:col-span-4 md:max-w-none">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/profile/SiddharthChillale_square.jpg"
+            alt="Siddharth Chillale"
+            className="absolute inset-0 size-full object-cover object-[50%_20%]"
+          />
+        </div>
+
+        <div className="flex flex-col md:col-span-8">
+          <p className="font-[family-name:var(--font-display)] text-[1.5rem] font-medium leading-[1.2] tracking-[-0.02em] md:text-[2rem]">
             I build AI-powered applications that hold up past the demo &mdash;
             human-in-the-loop workflows, evaluation frameworks, and the
-            full-stack, cloud infrastructure underneath them. I also read
-            books, and read books about writing programs.
+            full-stack, cloud infrastructure underneath them.
           </p>
-        </Tile>
+          <p className="mt-5 max-w-[46ch] text-[15px] leading-relaxed text-muted-foreground">
+            I also read books, and read books about writing programs.
+          </p>
 
-        {/* Education + socials */}
-        <Tile span="md:col-start-3 md:col-end-5 md:row-start-2 md:row-end-4" className="gap-px">
-          <div className="flex items-start gap-3 px-1.5 pb-3">
-            <Icon name="cap" className="mt-0.5 size-5 shrink-0 text-[var(--muted-foreground-2)]" />
-            <div>
-              <div className="text-sm font-semibold leading-snug">
-                MS Computer Science
-              </div>
-              <div className="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">
-                University at Buffalo, SUNY &middot; 2023
-              </div>
+          <dl className="mt-auto grid grid-cols-2 gap-x-6 gap-y-4 pt-10">
+            <div className="border-t border-foreground pt-2">
+              <dt className={label}>Currently</dt>
+              <dd className="mt-1 text-[14px] leading-snug">
+                Senior Software Engineer, IncubXperts
+              </dd>
             </div>
-          </div>
-          <div className="mx-1.5 mb-1.5 h-px bg-border" aria-hidden="true" />
-          {socials.map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              target={s.href.startsWith('mailto:') ? undefined : '_blank'}
-              rel="noopener noreferrer"
-              className="flex items-center gap-2.5 rounded-xs px-2 py-[5px] text-[13.5px] transition-colors hover:bg-[var(--hover)] hover:text-primary"
-            >
-              <Icon
-                name={s.icon}
-                className="size-[15px] shrink-0 text-[var(--muted-foreground-2)]"
-              />
-              {s.label}
-              <span className="ml-auto text-[11.5px] text-[var(--muted-foreground-2)]">
-                {s.handle}
-              </span>
-            </a>
-          ))}
-        </Tile>
+            <div className="border-t border-foreground pt-2">
+              <dt className={label}>Based in</dt>
+              <dd className="mt-1 text-[14px] leading-snug">
+                Pune, Maharashtra
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
 
-        {/* Stack: things you install get tags, things you do get line icons */}
-        <Tile span="md:col-start-5 md:col-end-7 md:row-start-2 md:row-end-4">
-          <TileLabel icon="chip" className="mb-2">
-            Stack
-          </TileLabel>
-          <p className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[var(--muted-foreground-2)]">
-            Languages &amp; tools
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {tools.map((t) => (
-              <Tag key={t.name} tone={t.tone}>
-                {t.name}
-              </Tag>
-            ))}
-          </div>
-          <p className="mb-1.5 mt-3 text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[var(--muted-foreground-2)]">
-            Domains
-          </p>
-          <div className="flex flex-col gap-1.5">
-            {domains.map((d) => (
-              <div
-                key={d.name}
-                className="flex items-center gap-2.5 text-[12.5px] leading-tight"
-              >
-                <Icon
-                  name={d.icon}
-                  className="size-[15px] shrink-0 text-[var(--muted-foreground-2)]"
-                />
-                {d.name}
-              </div>
-            ))}
-          </div>
-        </Tile>
-
-        {/* Timeline - real <details>, so six entries fit in one tile */}
-        <Tile span="md:col-start-1 md:col-end-3 md:row-start-4 md:row-end-6">
-          <TileLabel icon="clock">Timeline</TileLabel>
-          <FadeScroll label="Timeline">
-            {timeline.map((era) => (
-            <details
+      <Section title="Experience" icon="clock">
+        <ol>
+          {timeline.map((era) => (
+            <li
               key={era.org}
-              open={era.open}
-              className="group border-b border-border last:border-b-0"
+              className="grid grid-cols-[5.5rem_1fr] gap-x-6 border-t border-border py-5 first:border-t-0 first:pt-0 sm:grid-cols-8"
             >
-              <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-xs px-1.5 py-2 text-[13.5px] font-medium hover:bg-[var(--hover)] [&::-webkit-details-marker]:hidden">
-                <Icon
-                  name="chevron"
-                  className="size-3 shrink-0 text-[var(--muted-foreground-2)] transition-transform group-open:rotate-90"
-                />
-                {era.org}
-                <span className="ml-auto shrink-0 text-[11.5px] tabular-nums text-[var(--muted-foreground-2)]">
-                  {era.period}
-                </span>
-              </summary>
-              <div className="flex flex-col gap-2 py-0.5 pb-3 pl-7 pr-1.5">
-                {era.rows.map((r) => (
-                  <div key={r.title}>
-                    <div className="text-[13px] leading-snug">{r.title}</div>
-                    <div className="text-xs leading-snug text-muted-foreground">
-                      {r.detail}
+              <span className="font-[family-name:var(--font-display)] text-lg font-bold tabular-nums leading-tight tracking-[-0.02em] sm:col-span-2">
+                {era.period}
+              </span>
+              <div className="sm:col-span-6">
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-bold leading-tight tracking-[-0.02em]">
+                  {era.org}
+                </h3>
+                <div className="mt-2 flex flex-col gap-2">
+                  {era.rows.map((r) => (
+                    <div key={r.title}>
+                      <div className="text-[14.5px] leading-snug">{r.title}</div>
+                      <div className="text-[13px] leading-snug text-muted-foreground">
+                        {r.detail}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </Section>
+
+      <Section title="Selected work" icon="cube">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2">
+          {projects.map((p) => (
+            <article
+              key={p.title}
+              // The section rule already sits above the first row.
+              className="border-t border-foreground pt-3 first:border-t-0 first:pt-0 sm:[&:nth-child(2)]:border-t-0 sm:[&:nth-child(2)]:pt-0"
+            >
+              <div className="flex items-center justify-between">
+                <Icon name={p.icon} className="size-6" />
+                <span className={cn(label, 'tabular-nums')}>{p.when}</span>
+              </div>
+              <h3 className="mt-6 font-[family-name:var(--font-display)] text-[1.75rem] font-extrabold leading-none tracking-[-0.035em]">
+                {p.title}
+              </h3>
+              <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
+                {p.blurb}
+              </p>
+              <p className={cn(label, 'mt-4 font-semibold tracking-[0.08em]')}>
+                {p.stack.join(' / ')}
+              </p>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Stack" icon="chip">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2">
+          <div>
+            <h3 className={cn(label, 'border-b border-foreground pb-2')}>
+              Domains
+            </h3>
+            <ul>
+              {domains.map((d) => (
+                <li
+                  key={d.name}
+                  className="flex items-center gap-3 border-b border-border py-3 text-[15px]"
+                >
+                  <Icon name={d.icon} className="size-[18px] shrink-0" />
+                  {d.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className={cn(label, 'border-b border-foreground pb-2')}>
+              Languages &amp; tools
+            </h3>
+            <ul className="grid grid-cols-2 gap-x-4 lg:grid-cols-3">
+              {tools.map((t) => (
+                <li
+                  key={t}
+                  className="border-b border-border py-3 font-[family-name:var(--font-display)] text-[15px] font-bold tracking-[-0.01em]"
+                >
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Certifications" icon="award">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="border-b border-foreground">
+              <th scope="col" className={cn(label, 'pb-2 font-bold')}>
+                Name
+              </th>
+              <th scope="col" className={cn(label, 'w-24 pb-2 text-right font-bold')}>
+                Issued
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {certifications.map((c) => (
+              <tr key={c.name} className="border-b border-border">
+                <td className="py-3 pr-4 text-[15px]">
+                  <span className="flex items-center gap-3">
+                    <Icon name={c.icon} className="size-[18px] shrink-0" />
+                    {c.name}
+                  </span>
+                </td>
+                <td className="py-3 text-right text-[14px] tabular-nums text-muted-foreground">
+                  {c.issued}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Section>
+
+      <Section title="Off the clock" icon="books">
+        <blockquote className="font-[family-name:var(--font-display)] text-[1.5rem] font-bold leading-[1.15] tracking-[-0.025em] md:text-[2rem]">
+          Curious, tenacious and persistent &mdash; still going looking for
+          experiences I haven&rsquo;t had yet.
+        </blockquote>
+
+        <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2">
+          <div>
+            <h3 className={cn(label, 'border-b border-foreground pb-2')}>
+              Reading
+            </h3>
+            <ul>
+              {reading.map((b) => (
+                <li
+                  key={b.title}
+                  className="flex items-start gap-3 border-b border-border py-3"
+                >
+                  <Icon
+                    name={b.done ? 'check' : 'box'}
+                    className="mt-0.5 size-[18px] shrink-0"
+                  />
+                  <div>
+                    <div
+                      className={cn(
+                        'text-[15px] leading-snug',
+                        b.done && 'text-muted-foreground line-through',
+                      )}
+                    >
+                      {b.title}
+                    </div>
+                    <div className="mt-0.5 text-[13px] text-muted-foreground">
+                      {b.author}
+                      {b.done ? ' · finished' : ' · in progress'}
                     </div>
                   </div>
-                ))}
-                </div>
-              </details>
-            ))}
-          </FadeScroll>
-        </Tile>
-
-        {/* Selected work */}
-        <Tile span="md:col-start-3 md:col-end-7 md:row-start-4 md:row-end-6">
-          <TileLabel icon="cube">Selected work</TileLabel>
-          <div className="grid min-h-0 flex-1 content-start gap-x-3.5 gap-y-1.5 md:grid-cols-2">
-            {projects.map((p) => (
-              <div
-                key={p.title}
-                className="flex items-start gap-2.5 rounded-xs px-1.5 py-[7px] hover:bg-[var(--hover)]"
-              >
-                <Icon
-                  name={p.icon}
-                  className="mt-0.5 size-[19px] shrink-0 text-[var(--muted-foreground-2)]"
-                />
-                <div>
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <span className="text-[13px] font-semibold leading-tight">
-                      {p.title}
-                    </span>
-                    <span className="text-[11px] tabular-nums text-[var(--muted-foreground-2)]">
-                      {p.when}
-                    </span>
-                  </div>
-                  <div className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-                    {p.blurb}
-                  </div>
-                  <div className="mt-1.5 flex flex-wrap gap-1">
-                    {p.stack.map((s) => (
-                      <Tag key={s.name} tone={s.tone}>
-                        {s.name}
-                      </Tag>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+                </li>
+              ))}
+            </ul>
           </div>
-        </Tile>
-
-        {/* Certifications - scrolls, fades, never says "scroll" */}
-        <Tile span="md:col-start-1 md:col-end-3 md:row-start-6 md:row-end-8" className="px-0 pb-0">
-          <TileLabel icon="table" className="px-5">
-            Certifications
-          </TileLabel>
-          <FadeScroll label="Certifications">
-            <div className="grid grid-cols-[1fr_74px] items-center gap-2.5 border-b border-border px-5 py-[7px] text-[10.5px] font-semibold uppercase tracking-[0.06em] text-[var(--muted-foreground-2)]">
-              <span>Name</span>
-              <span>Issued</span>
+          <div>
+            <h3 className={cn(label, 'border-b border-foreground pb-2')}>
+              Sport
+            </h3>
+            <div className="flex items-start gap-3 py-3">
+              <Icon name="paddle" className="mt-0.5 size-[18px] shrink-0" />
+              <p className="text-[15px] leading-snug">
+                Table tennis and badminton &mdash; and I like to think I&rsquo;m
+                good at it.
+              </p>
             </div>
-            {certifications.map((c) => (
-              <div
-                key={c.name}
-                className="grid grid-cols-[1fr_74px] items-center gap-2.5 border-b border-border px-5 py-[7px] text-[12.5px] last:border-b-0 hover:bg-[var(--hover)]"
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Contact" icon="mail">
+        <ul>
+          {socials.map((s) => (
+            <li key={s.label} className="border-b border-foreground first:[&>a]:pt-0">
+              <a
+                href={s.href}
+                target={s.href.startsWith('mailto:') ? undefined : '_blank'}
+                rel="noopener noreferrer"
+                className="group flex items-center gap-4 py-4 outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 focus-visible:ring-offset-background"
               >
-                <span className="flex min-w-0 items-center gap-2">
-                  <Icon
-                    name={c.icon}
-                    className="size-3.5 shrink-0 text-[var(--muted-foreground-2)]"
-                  />
-                  <span className="truncate">{c.name}</span>
+                <Icon name={s.icon} className="size-6 shrink-0" />
+                <span className="font-[family-name:var(--font-display)] text-[1.75rem] font-extrabold leading-none tracking-[-0.035em] md:text-[2.25rem]">
+                  {s.label}
                 </span>
-                <span className="text-[11.5px] tabular-nums text-muted-foreground">
-                  {c.issued}
+                <span className="ml-auto text-[14px] text-muted-foreground transition-colors group-hover:text-foreground">
+                  {s.handle}
                 </span>
-              </div>
-            ))}
-          </FadeScroll>
-        </Tile>
-
-        {/* Reading */}
-        <Tile span="md:col-start-3 md:col-end-5 md:row-start-6 md:row-end-8" className="justify-center">
-          <TileLabel icon="books">Reading</TileLabel>
-          {reading.map((b) => (
-            <div
-              key={b.title}
-              className="flex items-start gap-2.5 rounded-xs px-1.5 py-[7px] hover:bg-[var(--hover)]"
-            >
-              <Icon
-                name={b.done ? 'check' : 'box'}
-                className={
-                  b.done
-                    ? 'mt-0.5 size-[15px] shrink-0 text-primary'
-                    : 'mt-0.5 size-[15px] shrink-0 text-[var(--muted-foreground-2)]'
-                }
-              />
-              <div>
-                <div
-                  className={
-                    b.done
-                      ? 'text-[13px] leading-snug text-[var(--muted-foreground-2)] line-through'
-                      : 'text-[13px] leading-snug'
-                  }
-                >
-                  {b.title}
-                </div>
-                <div className="mt-px text-[11.5px] text-[var(--muted-foreground-2)]">
-                  {b.author}
-                </div>
-              </div>
-            </div>
+                <Icon
+                  name="chevron"
+                  className="size-4 shrink-0 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+                />
+              </a>
+            </li>
           ))}
-        </Tile>
-
-        {/* Quote */}
-        <Tile span="md:col-start-5 md:col-end-7 md:row-start-7 md:row-end-8" className="justify-center">
-          <blockquote className="border-l-2 border-primary pl-4">
-            <p className="text-lg italic leading-snug">
-              Curious, tenacious and persistent &mdash; still going looking for
-              experiences I haven&rsquo;t had yet.
-            </p>
-          </blockquote>
-        </Tile>
-
-        {/* Away from the keyboard */}
-        <Tile
-          span="md:col-start-5 md:col-end-7 md:row-start-6 md:row-end-7"
-          muted
-          className="flex-row items-center gap-3.5"
-        >
-          <Icon name="paddle" className="size-10 shrink-0 text-muted-foreground" />
-          <p className="text-[13.5px] leading-normal">
-            Table tennis and badminton &mdash; and I like to think I&rsquo;m
-            good at it.
-          </p>
-        </Tile>
-      </Bento>
+        </ul>
+      </Section>
     </div>
   );
 }

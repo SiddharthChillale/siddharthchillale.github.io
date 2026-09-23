@@ -51,16 +51,6 @@
      #B3D4FF on #FDF8F6 is ~1.4:1; this is 4.6:1, so it clears AA for the
      14px body copy on the home page. */
   --secondary-ink: #4F72A8;
-  --hover: #F7F2EE;
-
-  /* Tag tints. Coral is --primary; sand and lilac are warm neutrals, so the
-     cards stay on the warm side of the palette. */
-  --tag-coral-bg: rgb(229 115 115 / 0.15);
-  --tag-coral-fg: #96393A;
-  --tag-sand-bg: #F1EAE3;
-  --tag-sand-fg: #6A5C50;
-  --tag-lilac-bg: rgb(140 123 168 / 0.16);
-  --tag-lilac-fg: #5B4A75;
 
   --background: #FDF8F6;
   --foreground: #1A1A2E;
@@ -85,14 +75,6 @@
 .dark {
   --muted-foreground-2: #77778C;
   --secondary-ink: #8FB0E0;
-  --hover: #31315A;
-
-  --tag-coral-bg: rgb(255 138 128 / 0.2);
-  --tag-coral-fg: #FFB4AD;
-  --tag-sand-bg: #31315A;
-  --tag-sand-fg: #BDBACC;
-  --tag-lilac-bg: rgb(154 132 196 / 0.26);
-  --tag-lilac-fg: #C6B4E2;
 
   --background: #1A1A2E;
   --foreground: #F5F0EB;
@@ -173,7 +155,7 @@ span[data-line] {
 }
 
 /* A page can widen the shared container - header and footer included - by
-   rendering [data-wide]. Used by /about, where a 6-column bento needs the room.
+   rendering [data-wide]. Used by /about, where the 12-column grid needs the room.
    Degrades to 700px if :has() is unavailable. */
 body:has([data-wide]) {
   --container-w: 1040px;
@@ -181,7 +163,7 @@ body:has([data-wide]) {
 
 /* =========================================================================
    The line system. One stroke weight for every drawn mark on the site:
-   tile borders, icons, illustrations. Colour comes from currentColor so
+   icons and illustrations. Colour comes from currentColor so
    both themes work without a single hard-coded hex.
    ========================================================================= */
 .ln {
@@ -197,33 +179,6 @@ body:has([data-wide]) {
    different line weights and the whole conceit falls apart. */
 .ln * {
   vector-effect: non-scaling-stroke;
-}
-
-/* Tags carry the only colour on the page. Things you install get a tag;
-   things you do get a line icon instead. */
-.tag {
-  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12.5px] font-medium whitespace-nowrap;
-}
-.tag-coral  { background: var(--tag-coral-bg);  color: var(--tag-coral-fg); }
-.tag-sand   { background: var(--tag-sand-bg);   color: var(--tag-sand-fg); }
-.tag-lilac  { background: var(--tag-lilac-bg);  color: var(--tag-lilac-fg); }
-
-/* Scrolls without a scrollbar, and fades out at the foot so the extra rows
-   announce themselves instead of being labelled "scroll for more". */
-.fade-scroll {
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent);
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent);
-}
-.fade-scroll::-webkit-scrollbar {
-  display: none;
-}
-/* Drop the fade once there is genuinely nothing below. */
-.fade-scroll[data-end] {
-  -webkit-mask-image: none;
-  mask-image: none;
 }
 
 @utility text-balance {
